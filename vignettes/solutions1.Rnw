@@ -1,0 +1,327 @@
+%\VignetteIndexEntry{solutions1}
+%!Snw weave = knitr
+%\VignetteEngine{knitr::knitr}
+<<echo=FALSE>>=
+results='show';echo=TRUE
+@
+
+\documentclass[a4paper,justified,openany]{tufte-handout}
+
+<<setup, include=FALSE, cache=FALSE>>=
+library(knitr)
+opts_knit$set(out.format = "latex")
+knit_theme$set(knit_theme$get("greyscale0"))
+
+options(replace.assign=FALSE,width=50)
+
+opts_chunk$set(fig.path='knitr_figure/graphics-', 
+               cache.path='knitr_cache/graphics-', 
+               fig.align='center', 
+               dev='pdf', fig.width=5, fig.height=5, 
+               fig.show='hold', cache=FALSE, par=TRUE)
+knit_hooks$set(crop=hook_pdfcrop)
+
+knit_hooks$set(par=function(before, options, envir){
+    if (before && options$fig.show!='none') {
+        par(mar=c(3,3,2,1),cex.lab=.95,cex.axis=.9,
+            mgp=c(2,.7,0),tcl=-.01, las=1)
+}}, crop=hook_pdfcrop)
+@
+
+\usepackage{amsmath}
+
+% Set up the images/graphics package
+\usepackage{graphicx}
+\setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+\graphicspath{{graphics/}}
+
+\title{Statistical modelling: practical 1 \Sexpr{ifelse(echo, "solutions", "")}}
+
+%\author[Dr Colin Gillespie]{Dr Colin S. Gillespie}
+\date{}  % if the \date{} command is left out, the current date will be used
+
+% The following package makes prettier tables.  We're all about the bling!
+\usepackage{booktabs}
+
+% The units package provides nice, non-stacked fractions and better spacing
+% for units.
+\usepackage{units}
+
+% The fancyvrb package lets us customize the formatting of verbatim
+% environments.  We use a slightly smaller font.
+\usepackage{fancyvrb}
+\fvset{fontsize=\normalsize}
+\newcommand{\cc}{\texttt}
+\graphicspath{{../graphics/}}
+\setcounter{secnumdepth}{2}
+
+
+\usepackage{microtype}
+\begin{document}
+
+\maketitle% this prints the handout title, author, and date
+
+\begin{abstract}
+  \noindent I've starred, $^*$, some of the questions. This indicates that we didn't
+  directly cover the material in the lecture. If you are particular interested
+  in this statistical area, try the question. Otherwise, just move on.
+\end{abstract}
+<<echo=FALSE>>=
+x = c(78.64,79.01, 79.57, 79.52, 80.71, 79.95, 78.50,
+  79.10, 81.98, 80.09, 80.29, 80.22)
+y = c(81.92, 81.12, 82.47, 82.86, 82.89, 82.45,
+     82.51, 81.11, 83.07, 82.77, 82.38, 83.14)
+dd = data.frame(x, y)
+@ 
+
+
+\section*{Course R package}
+
+
+Installing the the course R package\sidenote{A package is an \textit{add-on} or a \textit{module}. It provides with additional functions and data.} 
+is straightforward. First install \cc{drat}:
+
+<<eval=FALSE, tidy=FALSE>>=
+install.packages("drat")
+@
+
+\noindent Then
+
+<<eval=FALSE, tidy=FALSE>>=
+drat::addRepo("jr-packages")
+install.packages("jrModelling")
+@ 
+
+\noindent This R package contains copies of the practicals, solutions and data sets that we require. To load the package, use
+
+<<>>=
+library("jrModelling")
+@ 
+
+<<echo=FALSE>>=
+x = c(78.64,79.01, 79.57, 79.52, 80.71, 79.95, 78.50,
+  79.10, 81.98, 80.09, 80.29, 80.22)
+y = c(81.92, 81.12, 82.47, 82.86, 82.89, 82.45,
+     82.51, 81.11, 83.07, 82.77, 82.38, 83.14)
+dd = data.frame(x, y)
+## var(y)
+## var.test(x, y)
+@ 
+
+
+
+\begin{table}
+  \centering
+  \begin{tabular}{@{}llllll@{}}
+    \toprule
+    \multicolumn{6}{l}{Method A}\\
+    \midrule
+    78.64 & 79.01 & 79.57 & 79.52 & 80.71 & 79.95\\
+    78.50 & 79.10 & 81.98 & 80.09 & 80.29 & 80.22\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+\begin{table}
+  \centering
+  \begin{tabular}{@{}llllll@{}}
+    \toprule
+    \multicolumn{6}{l}{Method B}\\
+    \midrule
+     81.92 & 81.12 & 82.47 & 82.86 & 82.89 & 82.45 \\
+     82.51 & 81.11 & 83.07 & 82.77 & 82.38 & 83.14 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{enumerate}
+ \item We conducted an experiment and collected the data in the tables above. This 
+ data set isn't paired.\sidenote{I intentionally didn't make the data
+    available for download so you would have to think about how to enter the
+    data. You could enter it either Excel and import or directly into R.}
+
+<<echo=echo, results=results>>=
+##Data for question 1 
+## Easier using Excel and export as CSV
+x = c(78.64,79.01, 79.57, 79.52, 80.71, 79.95, 78.50,
+  79.10, 81.98, 80.09, 80.29, 80.22)
+y = c(81.92, 81.12, 82.47, 82.86, 82.89, 82.45,
+     82.51, 81.11, 83.07, 82.77, 82.38, 83.14)
+dd = data.frame(x, y)
+@
+
+\begin{enumerate}
+\item Input the data into R\sidenote{Here I would suggest input the data into Excel and using \cc{read\_csv}}. Combine the two data sets into a single data frame.
+
+<<echo=FALSE>>=
+d1 = data.frame(value = x)
+d2 = data.frame(value = y)
+@
+
+<<echo=echo, results=results, eval=FALSE>>=
+## Suppose you have two separate data files. Here is some code that will help ## you combine them. First we read in the separate files:
+d1 = read.csv("Method1.csv")
+d2 = read.csv("Method2.csv")
+@
+
+<<echo=echo, results=results>>=
+## In order to combine the data frames, 
+## they must have the same column names:
+head(d1, 2)
+head(d2, 2)
+@
+<<echo=echo, results=results>>=
+## We combine data frames using rbind (row bind)
+d = rbind(d1, d2)
+@
+<<echo=echo, results=results>>=
+## Finally we create a new column to indicate the Method
+## rep is the replicate function. See ?rep
+d$Method = rep(1:2, each=12)
+head(d, 2)
+@
+
+
+\item Exploratory data analysis.
+  \begin{itemize}
+  \item Construct boxplots, histograms and q-q plots for both data sets. Work
+    out the means and standard deviations. Before carrying out any statistical
+    test, what do you think your conclusions will be? Do you think the variances
+    are roughly equal? Do you think the data conforms to a normal
+    distribution.
+  \end{itemize}
+\item Carry out a two sample $t$-test. Assume that the variances are unequal.
+
+<<echo=echo, results=results>>=
+t.test(value ~ Method, data=d, var.equal=FALSE)
+@
+
+  How does this answer compare with your intuition?
+\item Use the \cc{var.test} function to test for unequal
+  variances.\sidenote{This function isn't in the notes. Look at the help file.}
+<<echo=echo, results=results>>=
+var.test(value ~ Method, data=d)
+@
+\noindent Since the $p =0.2585$, this does not provide enough evidence to reject $H_0$ and so we don't have any reason to believe that the variances are unequal.
+
+  Does this correspond to your intuition?
+\item  Carry out a two sample $t$-test, assuming equal variances.
+
+<<echo=echo, results=results>>=
+t.test(value ~ Method, data=d, var.equal=TRUE)
+@
+
+\item  $^*$ Now carry out a \cc{wilcox.test}.
+\item  $^*$ When carrying out the Wilcoxon test, we assume a common distribution. This
+  assumption can be tested using the \textit{Kolmogorov-Smirnov} test:
+  \cc{ks.test}.\sidenote{Again this function isn't in the notes. Look at the
+    help file.} Is the assumption of a common distribution valid?
+\end{enumerate}
+
+\item \newthought{Suppose we} are interested whether successful business
+  executives are affected by their zodiac sign. We have collected 4265 samples
+  and obtained the following data
+
+\begin{table*}[h]
+  \resizebox{\textwidth}{!}{%
+  \centering
+  \begin{tabular}{@{}llll llll llll@{}}
+    \toprule
+    Aries & Taurus & Gemini & Cancer & Leo & Virgo & Libra & Scorpio &
+    Sagittarius & Capricorn & Aquarius & Pisces \\
+    \midrule
+    348 & 353 & 359 & 357 & 350 & 355 & 359 & 367 & 345 & 362 & 343 & 367\\
+\bottomrule
+  \end{tabular}}
+  \caption{Zodiac signs of 4265 business executives}
+  \label{tab:1}
+\end{table*}
+\begin{enumerate}
+\item Carry out a $\chi^2$ goodness of fit test on the zodiac data. Are business
+  executives distributed uniformly across zodiac signs?
+  
+<<echo=echo, results=results>>=
+x = c(348, 353, 359, 357, 350, 355, 359, 367, 345, 362, 343, 367)
+m = chisq.test(x)
+##Since p > 0.05 we can't accept the alternative hypothesis. 
+##However, the question is worded as though we can "prove" the Null
+##hypotheis, which we obviously can't do.
+@
+
+  
+\item What are the expected values for each zodiac sign?
+<<echo=echo, results=results>>=
+##expected values
+(expected = m[["expected"]])
+@
+
+\item The formula for calculating the residuals\sidenote{These residuals are
+    called Pearson residuals. Hint: use \cc{str(m)} to extract the residuals.} is given by
+  \[
+\frac{\text{observed} - \text{expected}}{\sqrt{\text{expected}}}
+\]
+Which residuals are large?
+<<echo=echo, results=results>>=
+##Residuals
+m[["residuals"]]
+@
+
+\end{enumerate}
+\item If you have brought your own data, feel free to try these techniques on this data.
+\item \newthought{The} University of Texas Southwestern Medical Center examined
+  whether the risk of contracting Hepatitis C was related to tattoo
+  use.\marginnote{Haley, R. and Fischer, P.R. 2001} The data from the study is
+  summarised as follows:
+
+\begin{table}[h]
+  \centering
+  \caption{Counts of patients by their Hepatitis C status and whether they had a
+    tattoo from a parlour, from elsewhere or had no tattoo at all.}
+\begin{tabular}{@{}llll@{}}
+  \toprule
+  & Hepatitis C & No Hepatitis C & Total \\
+  \midrule
+  Tattoo, Parlour & 17 & 35 & 52 \\
+  Tattoo, elsewhere & 8 & 53  & 61 \\
+  No tattoo & 22 & 491 & 513\\
+  \midrule
+  Total & 47 & 579 & 626 \\
+  \bottomrule
+\end{tabular}
+\end{table}
+\begin{enumerate}
+\item Carry out a $\chi^2$ test to determine if the Hepatitis is related to
+  tattoo status.
+<<warning=FALSE,echo=echo, results=results>>=
+h = c(17, 8, 22)
+nh = c(35, 53, 491)
+dd = data.frame(h, nh)
+m = chisq.test(dd)
+@
+\item When carrying out $\chi^2$ tests, we should make sure that individual
+  cells have expected values of at least five, otherwise the distributional
+  assumptions may be invalid. What are the expected values of each cell. Which
+  cells have an expected value less than five?
+<<echo=echo, results=results>>=
+m[["expected"]]
+@
+
+\item Since some of the cells have expected values slightly less than five, we
+  should ensure that these aren't driving the test statistic. Look at the test
+  residuals. Which residuals are large? What should you do now?
+<<echo=echo, results=results>>=
+##Some of the expected values are less then 5
+##So consider combining cells.
+@
+
+\end{enumerate}
+\end{enumerate}
+
+\section*{Solutions}
+
+Solutions are contained within this package:
+<<eval=FALSE>>=
+vignette("solutions1", package = "jrModelling")
+@
+
+
+\end{document}

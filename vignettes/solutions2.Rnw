@@ -1,0 +1,466 @@
+%\VignetteIndexEntry{solutions2}
+%!Snw weave = knitr
+%\VignetteEngine{knitr::knitr}
+<<echo=FALSE>>=
+results='show';echo=TRUE
+@
+\documentclass[a4paper,justified,openany]{tufte-handout}
+<<setup, include=FALSE, cache=FALSE>>=
+library(knitr)
+opts_knit$set(out.format = "latex")
+knit_theme$set(knit_theme$get("greyscale0"))
+
+options(replace.assign=FALSE,width=50)
+
+opts_chunk$set(fig.path='knitr_figure/graphics-', 
+               cache.path='knitr_cache/graphics-', 
+               fig.align='center', 
+               dev='pdf', fig.width=5, fig.height=5, 
+               fig.show='hold', cache=FALSE, par=TRUE)
+knit_hooks$set(crop=hook_pdfcrop)
+
+knit_hooks$set(par=function(before, options, envir){
+  if (before && options$fig.show!='none') {
+    par(mar=c(3,3,2,1),cex.lab=.95,cex.axis=.9,
+        mgp=c(2,.7,0),tcl=-.01, las=1)
+  }}, crop=hook_pdfcrop)
+@
+\usepackage{amsmath}
+
+% Set up the images/graphics package
+\usepackage{graphicx}
+\setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+\graphicspath{{graphics/}}
+
+\title{Statistical modelling: practical 2 \Sexpr{ifelse(echo, "solutions", "")}}
+
+%\author[Dr Colin Gillespie]{Dr Colin Gillespie}
+\date{}  % if the \date{} command is left out, the current date will be used
+
+% The following package makes prettier tables.  We're all about the bling!
+\usepackage{booktabs}
+
+% The units package provides nice, non-stacked fractions and better spacing
+% for units.
+\usepackage{units}
+
+% The fancyvrb package lets us customize the formatting of verbatim
+% environments.  We use a slightly smaller font.
+\usepackage{fancyvrb}
+\fvset{fontsize=\normalsize}
+\newcommand{\cc}{\texttt}
+\graphicspath{{../graphics/}}
+\setcounter{secnumdepth}{2}
+
+\usepackage{microtype}
+\begin{document}
+
+\maketitle% this prints the handout title, author, and date
+
+% \begin{abstract}
+
+% \end{abstract}
+\section{Simple linear regression}
+
+\begin{enumerate}
+\item \newthought{Consider the} data in table \ref{T1} for ice cream sales at Luigi
+Minchella's ice cream parlour.
+\begin{enumerate}
+\item Perform a linear regression of $y$ on $x$. Should temperature be included
+in the model?
+<<echo=echo, results=results>>=
+x = c(4,4,7,8,12,15,16,17,14,11,7,5)
+y = c(73, 57, 81, 94, 110, 124, 134, 139, 124, 103, 81, 80)
+m = lm(y~x)
+summary(m)
+##The p-value for the gradient is 9.9e-09
+##This suggests temperatue is useful
+@
+
+\item Calculate the sample correlation coefficient $r$. Perform a hypothesis
+test, where $H_0: \rho =0$ and $H_1: \rho \ne 0$.\sidenote{See section 2.6 in
+your notes.} Compare this $p$-value to the $p$-value
+for testing if $\beta_1 =0$.
+
+<<echo=echo, results=results>>=
+##The p-value for the correlation is also 9.9e-09
+cor.test(x, y)
+@  
+\item Construct a graph of the data. Add a dashed red line indicating the line
+of best fit.
+<<F1, fig.keep='none', echo=(1:2)*echo>>=
+plot(x, y, xlab="Temp", ylab="Sales")
+abline(m, col=2, lty=2)
+text(5, 130, "r=0.983")
+@
+
+\begin{marginfigure}
+\centering
+<<ref.label='F1', dev='pdf', out.width='\\textwidth', echo=FALSE>>=
+@
+\caption{Scatterplot with the earnings data. Also shows the line of best fit (question 1c).}
+\end{marginfigure}
+
+\item Using the \cc{text} function, add the text \textit{r = 0.983} to your plot.
+<<F1, echo=3*echo, results=results, fig.keep='none'>>=
+@
+
+\item Plot the standardised residuals against the fitted values. Does the graph
+look random?
+<<F2, fig.keep='none', echo=echo>>=
+##Model diagnosics look good
+plot(fitted.values(m), rstandard(m))
+@
+
+\item Construct a q-q plot of the standardised residuals.
+
+<<fig.keep='none',echo=echo, results=results>>=
+qqnorm(rstandard(m))
+##Model diagnosics look good
+@
+\end{enumerate}
+
+<<echo=FALSE>>=
+x = c(4, 4, 7, 8, 12, 15, 16, 17, 14, 11, 7, 5)
+y = c(73, 57, 81, 94, 110, 124, 134, 139, 124, 103, 81, 80)
+@
+
+
+\item \newthought{In a study} of the effect of temperature $x$ on yield $y$ of a chemical
+process, the data in table \ref{T2} was obtained.
+\begin{enumerate}
+\item Perform a linear regression of $y$ on $x$.
+<<echo=echo>>=
+m = lm(y~x)
+@
+
+\item Calculate the sample correlation coefficient $r$.
+<<results=results,echo=echo>>=
+cor(x, y)
+@
+\item Plot the data and add the line of best fit to your plot.
+<<echo=echo,fig.keep='none'>>=
+plot(x, y)
+abline(m)
+@
+
+\item Plot the standardised residuals against the fitted values.
+<<echo=echo,fig.keep='none'>>=
+plot(fitted.values(m), rstandard(m), ylim=c(-2.5, 2.5))
+abline(h=c(-2, 0, 2), lty=3, col=4)
+@
+
+\item Construct a q-q plot of the Standardised residuals.
+<<echo=echo,fig.keep='none'>>=
+qqnorm(rstandard(m))
+qqline(rstandard(m), col=4)
+@
+\end{enumerate}
+\end{enumerate}
+
+
+\begin{table}[h]
+\resizebox{1.05\textwidth}{!}{
+\centering
+\begin{tabular}{@{}l llllll llllll@{}}
+\toprule
+Month  &Jan	&Feb	&Mar	&Apr	&May	&Jun	&Jul	&Aug	&Sep
+&Oct	&Nov	&Dec \\ 
+\midrule
+$x$, $^\textrm{o}$C&4&4	&7	&8	&12	&15	&16	&17	&14	&11	&7	&5	\\
+$y$, $\pounds$000's&73&57&81	&94	&110	&124	&134	&139	&124
+&103	&81	&80 \\ 
+\bottomrule
+\end{tabular}}
+\caption{Monthly sales data from Luigi Minchella's ice
+cream parlour.}\label{T1}
+\end{table}
+\begin{table}[b]
+\centering
+\begin{tabular}{@{}l llllll llllll@{}}
+\toprule
+$x$  & 25 & 26 & 27 & 28 & 29 & 30 & 31 & 32 & 33 & 34 & 35 & 36 \\
+\midrule
+$y$  & 10 & 16 & 13 & 17 & 20 & 18 & 19 & 23 & 25 & 22 & 29 & 26 \\ 
+\bottomrule
+\end{tabular}
+\caption{Twelve measurements from a study of temperature on yield.}\label{T2}
+\end{table}
+
+
+\clearpage
+
+\section{Multiple linear regression}
+\begin{enumerate}
+
+
+
+\item \newthought{The data}
+<<>>=
+library("jrModelling")
+data(graves)
+@ 
+are from 101 consecutive patients attending a combined
+thyroid-eye clinic. The patients have an endocrine disorder, Graves'
+Ophthalmopathy, which affects various aspects of their eyesight. The
+ophthalmologist measures various aspects of their eyesight and constructs an
+overall index of how the disease affects their eyesight. This is the
+Ophthalmic Index (OI) given in the dataset. The age of the patient and their
+sex are also recorded. In practice, and as this is a chronic condition which
+can be ameliorated but not cured, the OI would be monitored at successive
+clinic visits to check on the patient's progress. However, these data are
+obtained at presentation. We are interested in how OI changes with age and
+gender. The data can be obtained from
+\begin{enumerate}
+\item Fit the multivariate regression model predicting OI from age and gender.
+\item Examine the Standardised residual plots. Is there anything that would
+suggest you have a problem with your model? What do you do?
+\end{enumerate}
+\item \newthought{Dr Phil} comes to see you with his data. He believes that IQ can be
+predicted by the number of years education. Dr Phil does not differentiate
+between primary, secondary and tertiary education. He has four variables:
+\begin{itemize}
+\item \cc{IQ} - the estimated IQ of the person (the response variable);
+\item \cc{AgeBegin} - the age of the person when they commenced education;
+\item \cc{AgeEnd} - the age of the person when they finished education;
+\item \cc{TotalYears} - the total number of years a person spent in education.
+\end{itemize}
+The data can be obtained from:
+
+<<>>=
+data(drphil)
+@ 
+
+Read the data into R and fit the linear regression model:
+\[
+IQ = \beta_0 + \beta_1 AgeBegin + \beta_2 AgeEnd + \beta_3 TotalYears + \epsilon
+\]
+Explain what is wrong with this model? Suggest a possible remedy. 
+
+<<echo=echo, results=results>>=
+(m = lm(IQ ~ AgeBegin + AgeEnd + TotalYears, data=drphil))
+#The problem is TotalYears = AgeEnd - AgeBegin
+#Solution: remove TotalYears
+@
+
+\end{enumerate}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{One way ANOVA tables}
+
+\begin{enumerate}
+\item \newthought{A pilot study} was developed to investigate whether music
+influenced exam scores. Three groups of students listened to 10 minutes of
+Mozart, silence or heavy metal before an IQ test. The results of the IQ test
+are as follows
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}l lllllll@{}}
+\toprule
+Mozart &  109 & 114 &  108 &  123 &  115 &  108 & 114\\
+Silence & 113 & 114 &  113 &  108 &  119 &  112 & 110 \\
+Heavy Metal & 103  & 94   &114 &  107 &  107 &  113 & 107\\
+\bottomrule
+\end{tabular}
+\caption{Results from the study on how music affects examination performance.}
+\end{table}
+\begin{enumerate}
+\item Construct a one-way ANOVA table. Are there differences between treatment groups?
+<<echo=echo, results=results>>=
+x1 = c(109, 114, 108, 123, 115, 108, 114)
+x2 = c(113, 114, 113, 108, 119, 112, 110)
+x3 = c(103, 94, 114, 107, 107, 113, 107)
+dd = data.frame(values = c(x1, x2, x3), type = rep(c("M", "S", "H"), each=7))
+m = aov(values ~ type, dd)
+summary(m)
+##The p value is around 0.056.
+##This suggests a difference may exist.
+@
+\item Check the standardised residuals of your model.
+
+<<F3, fig.keep='none', echo=echo, results=results>>=
+plot(fitted.values(m), rstandard(m))
+## Residual plot looks OK
+@
+
+\begin{marginfigure}
+\centering
+<<ref.label='F3', dev='pdf', out.width='\\textwidth', echo=FALSE>>=
+@
+\caption{Model diagnosics for the music data.}
+\end{marginfigure}
+
+\item Perform a multiple comparison test to determine where the difference lies.
+<<, echo=echo, results=results>>=
+TukeyHSD(m)
+@
+
+\end{enumerate}
+
+
+
+\end{enumerate}
+
+
+\newthought{The following sections} use the results of the Olympic heptathlon
+competition, Seoul, 1988. To enter the data into R, use the following commands
+
+<<>>=
+data(hep)
+##Remove the athletes names and final scores.
+hep_s = hep[,2:8]
+@ 
+
+\section{Hierarchical clustering}
+
+\newthought{Using the heptathlon} data set, carry out a clustering analysis. Try
+different distance methods and clustering functions.
+
+<<fig.keep="none", echo=echo, results=results>>=
+plot(hclust(dist(hep_s)), labels=hep[,1])
+@ 
+
+\section{Principal components analysis}
+
+\begin{enumerate}
+\item Calculate the correlation matrix of the \cc{hep} data set.
+<<echo=echo, results=results>>=
+##Round to 2dp
+signif(cor(hep_s), 2)
+@
+
+\item Carry out a PCA on this data set.\sidenote{Remember to remove the
+athletes names.}
+\begin{itemize}
+\item Keep \cc{score} in your PCA analysis. What happens and why? Do you think
+you should remove \cc{score}?
+<<echo=echo, results=results>>=
+##Remove:
+##1st column: athletes name
+##Last column: It's a combination of the other columns
+dd = hep[ ,2:8]
+
+##Run principle components
+prcomp(dd)
+@
+
+\item Do you think you need to scale the data?
+<<echo=echo, results=results>>=
+##Yes!. run800m dominates the loading since
+##the scales differ
+@
+
+\item Construct a biplot of the data.
+<<echo=echo, results=results, fig.keep="none">>=
+prcomp(dd, scale=TRUE)
+biplot(prcomp(dd, scale=TRUE))
+@
+
+\end{itemize}
+\end{enumerate}
+
+
+\section{Survival analysis}
+
+This final section, is meant to give you a taste at other statistical techniques
+available. R has many packages\sidenote{A package is just an ``add-on'' that
+provides new functionality.} available. To install a package, we use the command
+
+<<eval=FALSE>>=
+install.packages("survival")
+@ 
+
+\noindent Once the package is installed, we load it using \cc{library} function
+
+<<message=FALSE>>=
+library(survival)
+@ 
+
+\noindent The data set we will use is the \cc{lung} data set\sidenote{Survival in patients
+with advanced lung cancer from the North Central Cancer Treatment Group.
+Performance scores rate how well the patient can perform usual daily
+activities.} - this comes with the \cc{survival} package. To load this data
+set, we use the command
+
+<<>>=
+data(lung)
+@ 
+
+\noindent We the use the \cc{dim} function to extract the number of rows and
+columns
+
+<<>>=
+dim(lung)
+@ 
+
+\noindent This creates a data frame with the following columns
+\begin{itemize}
+\item \cc{inst}:       Institution code
+\item \cc{time}:       Survival time in days
+\item \cc{status}:     censoring status 1=censored, 2=dead
+\item \cc{age}:        Age in years
+\item \cc{sex}:        Male=1 Female=2
+\item \cc{ph.ecog}:    ECOG performance score (0=good 5=dead)
+\item \cc{ph.karno}:   Karnofsky performance score (bad=0-good=100) rated by physician
+\item \cc{pat.karno}:  Karnofsky performance score as rated by patient
+\item \cc{meal.cal}:   Calories consumed at meals
+\item \cc{wt.loss}:    Weight loss in last six months
+\end{itemize}      
+To begin, we create a \cc{Surv} object:\sidenote{Look at \cc{?Surv} for
+further details.}
+
+<<results="hide">>=
+Surv(lung$time, lung$status)
+@ 
+
+\noindent We can fit a Kaplein-Meier curve using the \cc{surfit} function:
+
+<<results="hide">>=
+survfit(Surv(lung$time, lung$status)~1)
+@ 
+
+\noindent and also plot survival curve
+
+<<fig.keep="none">>=
+plot(survfit(Surv(lung$time, lung$status)~1))
+@ 
+
+\noindent To fit the model using an additional covariate, we just alter the
+formula
+
+<<fig.keep="none">>=
+plot(survfit(Surv(lung$time, lung$status)~lung$sex))
+@ 
+
+\noindent \textbf{Task:} Load the \cc{heart} data set:\sidenote{Look at the help
+page: \cc{?heart}}
+
+<<>>=
+data(heart)
+@ 
+
+\noindent and make a \cc{Surv} object
+
+<<results="hide">>=
+Surv(heart$start, heart$stop, heart$event) 
+@ 
+
+\noindent Why are there three arguments in the above function? Construct a
+Kaplein-Meier plot. Look at the \cc{coxph} function. Try fitting a cox
+proportional hazard function.
+
+
+\section*{Solutions}
+
+Solutions are contained within this package:
+<<eval=FALSE>>=
+vignette("solutions2", package = "jrModelling")
+@
+
+
+\end{document}
