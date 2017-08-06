@@ -173,6 +173,12 @@ NULL
 #' @docType data
 NULL
 
+#' @name lsd
+#' @title LSD & Maths
+#' @description Does LSD help your mathematical ability?
+#' @source https://www.ncbi.nlm.nih.gov/pubmed/5676802
+#' @docType data
+NULL
 
 
 
