@@ -8,5 +8,8 @@
 https://www.ncbi.nlm.nih.gov/pubmed/5676802
 }
 \description{
-Does LSD help your mathematical ability?
+Group of volunteers was given LSD, their mean scores on math exam and 
+tissue concentrations of LSD were obtained at n=7 time points. 
+
+The test score is out of 100 and the Drugs is (ppm).
 }
