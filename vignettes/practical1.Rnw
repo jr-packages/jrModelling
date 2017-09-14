@@ -14,10 +14,10 @@ knit_theme$set(knit_theme$get("greyscale0"))
 
 options(replace.assign=FALSE,width=50)
 
-opts_chunk$set(fig.path='knitr_figure/graphics-', 
-               cache.path='knitr_cache/graphics-', 
-               fig.align='center', 
-               dev='pdf', fig.width=5, fig.height=5, 
+opts_chunk$set(fig.path='knitr_figure/graphics-',
+               cache.path='knitr_cache/graphics-',
+               fig.align='center',
+               dev='pdf', fig.width=5, fig.height=5,
                fig.show='hold', cache=FALSE, par=TRUE)
 knit_hooks$set(crop=hook_pdfcrop)
 
@@ -72,13 +72,13 @@ x = c(78.64,79.01, 79.57, 79.52, 80.71, 79.95, 78.50,
 y = c(81.92, 81.12, 82.47, 82.86, 82.89, 82.45,
      82.51, 81.11, 83.07, 82.77, 82.38, 83.14)
 dd = data.frame(x, y)
-@ 
+@
 
 
 \section*{Course R package}
 
 
-Installing the the course R package\sidenote{A package is an \textit{add-on} or a \textit{module}. It provides with additional functions and data.} 
+Installing the the course R package\sidenote{A package is an \textit{add-on} or a \textit{module}. It provides with additional functions and data.}
 is straightforward. First install \cc{drat}:
 
 <<eval=FALSE, tidy=FALSE>>=
@@ -90,13 +90,13 @@ install.packages("drat")
 <<eval=FALSE, tidy=FALSE>>=
 drat::addRepo("jr-packages")
 install.packages("jrModelling")
-@ 
+@
 
 \noindent This R package contains copies of the practicals, solutions and data sets that we require. To load the package, use
 
 <<>>=
 library("jrModelling")
-@ 
+@
 
 <<echo=FALSE>>=
 x = c(78.64,79.01, 79.57, 79.52, 80.71, 79.95, 78.50,
@@ -106,7 +106,7 @@ y = c(81.92, 81.12, 82.47, 82.86, 82.89, 82.45,
 dd = data.frame(x, y)
 ## var(y)
 ## var.test(x, y)
-@ 
+@
 
 
 
@@ -134,13 +134,13 @@ dd = data.frame(x, y)
 \end{table}
 
 \begin{enumerate}
- \item We conducted an experiment and collected the data in the tables above. This 
+ \item We conducted an experiment and collected the data in the tables above. This
  data set isn't paired.\sidenote{I intentionally didn't make the data
     available for download so you would have to think about how to enter the
     data. You could enter it either Excel and import or directly into R.}
 
 <<echo=echo, results=results>>=
-##Data for question 1 
+##Data for question 1
 ## Easier using Excel and export as CSV
 x = c(78.64,79.01, 79.57, 79.52, 80.71, 79.95, 78.50,
   79.10, 81.98, 80.09, 80.29, 80.22)
@@ -164,7 +164,7 @@ d2 = read.csv("Method2.csv")
 @
 
 <<echo=echo, results=results>>=
-## In order to combine the data frames, 
+## In order to combine the data frames,
 ## they must have the same column names:
 head(d1, 2)
 head(d2, 2)
@@ -196,14 +196,14 @@ t.test(value ~ Method, data=d, var.equal=FALSE)
 @
 
   How does this answer compare with your intuition?
-\item Use the \cc{var.test} function to test for unequal
-  variances.\sidenote{This function isn't in the notes. Look at the help file.}
-<<echo=echo, results=results>>=
-var.test(value ~ Method, data=d)
-@
-\noindent Since the $p =0.2585$, this does not provide enough evidence to reject $H_0$ and so we don't have any reason to believe that the variances are unequal.
-
-  Does this correspond to your intuition?
+% \item Use the \cc{var.test} function to test for unequal
+%   variances.\sidenote{This function isn't in the notes. Look at the help file.}
+% <<echo=echo, results=results>>=
+% var.test(value ~ Method, data=d)
+% @
+% \noindent Since the $p =0.2585$, this does not provide enough evidence to reject $H_0$ and so we don't have any reason to believe that the variances are unequal.
+% 
+%   Does this correspond to your intuition?
 \item  Carry out a two sample $t$-test, assuming equal variances.
 
 <<echo=echo, results=results>>=
@@ -211,10 +211,10 @@ t.test(value ~ Method, data=d, var.equal=TRUE)
 @
 
 \item  $^*$ Now carry out a \cc{wilcox.test}.
-\item  $^*$ When carrying out the Wilcoxon test, we assume a common distribution. This
-  assumption can be tested using the \textit{Kolmogorov-Smirnov} test:
-  \cc{ks.test}.\sidenote{Again this function isn't in the notes. Look at the
-    help file.} Is the assumption of a common distribution valid?
+% \item  $^*$ When carrying out the Wilcoxon test, we assume a common distribution. This
+%   assumption can be tested using the \textit{Kolmogorov-Smirnov} test:
+%   \cc{ks.test}.\sidenote{Again this function isn't in the notes. Look at the
+%     help file.} Is the assumption of a common distribution valid?
 \end{enumerate}
 
 \item \newthought{Suppose we} are interested whether successful business
@@ -238,16 +238,16 @@ t.test(value ~ Method, data=d, var.equal=TRUE)
 \begin{enumerate}
 \item Carry out a $\chi^2$ goodness of fit test on the zodiac data. Are business
   executives distributed uniformly across zodiac signs?
-  
+
 <<echo=echo, results=results>>=
 x = c(348, 353, 359, 357, 350, 355, 359, 367, 345, 362, 343, 367)
 m = chisq.test(x)
-##Since p > 0.05 we can't accept the alternative hypothesis. 
+##Since p > 0.05 we can't accept the alternative hypothesis.
 ##However, the question is worded as though we can "prove" the Null
 ##hypotheis, which we obviously can't do.
 @
 
-  
+
 \item What are the expected values for each zodiac sign?
 <<echo=echo, results=results>>=
 ##expected values
@@ -266,7 +266,6 @@ m[["residuals"]]
 @
 
 \end{enumerate}
-\item If you have brought your own data, feel free to try these techniques on this data.
 \item \newthought{The} University of Texas Southwestern Medical Center examined
   whether the risk of contracting Hepatitis C was related to tattoo
   use.\marginnote{Haley, R. and Fischer, P.R. 2001} The data from the study is
