@@ -14,7 +14,10 @@ Imports:
     coin,
     shiny,
     ggplot2, 
-    titanic
+    titanic,
+    jrData
+Remotes: 
+    jr-packages/jrData
 Suggests:
     survival,
     knitr
