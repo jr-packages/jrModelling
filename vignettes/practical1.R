@@ -28,13 +28,6 @@ y = c(81.92, 81.12, 82.47, 82.86, 82.89, 82.45,
      82.51, 81.11, 83.07, 82.77, 82.38, 83.14)
 dd = data.frame(x, y)
 
-## ----eval=FALSE, tidy=FALSE---------------------
-#  install.packages("drat")
-
-## ----eval=FALSE, tidy=FALSE---------------------
-#  drat::addRepo("jr-packages")
-#  install.packages("jrModelling")
-
 ## -----------------------------------------------
 library("jrModelling")
 

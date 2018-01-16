@@ -74,26 +74,6 @@ y = c(81.92, 81.12, 82.47, 82.86, 82.89, 82.45,
 dd = data.frame(x, y)
 @
 
-
-\section*{Course R package}
-
-
-Installing the the course R package\sidenote{A package is an \textit{add-on} or a \textit{module}. It provides with additional functions and data.}
-is straightforward. First install \cc{drat}:
-
-<<eval=FALSE, tidy=FALSE>>=
-install.packages("drat")
-@
-
-\noindent Then
-
-<<eval=FALSE, tidy=FALSE>>=
-drat::addRepo("jr-packages")
-install.packages("jrModelling")
-@
-
-\noindent This R package contains copies of the practicals, solutions and data sets that we require. To load the package, use
-
 <<>>=
 library("jrModelling")
 @
