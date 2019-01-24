@@ -195,12 +195,7 @@ $y$  & 10 & 16 & 13 & 17 & 20 & 18 & 19 & 23 & 25 & 22 & 29 & 26 \\
 
 
 
-\item \newthought{The data}
-<<>>=
-library("jrModelling")
-data(graves)
-@ 
-are from 101 consecutive patients attending a combined
+\item \newthought{The data} are from 101 consecutive patients attending a combined
 thyroid-eye clinic. The patients have an endocrine disorder, Graves'
 Ophthalmopathy, which affects various aspects of their eyesight. The
 ophthalmologist measures various aspects of their eyesight and constructs an
@@ -211,6 +206,10 @@ can be ameliorated but not cured, the OI would be monitored at successive
 clinic visits to check on the patient's progress. However, these data are
 obtained at presentation. We are interested in how OI changes with age and
 gender. The data can be obtained from
+<<>>=
+library("jrModelling")
+data(graves)
+@ 
 \begin{enumerate}
 \item Fit the multivariate regression model predicting OI from age and gender.
 \item Examine the Standardised residual plots. Is there anything that would
@@ -246,221 +245,221 @@ Explain what is wrong with this model? Suggest a possible remedy.
 \end{enumerate}
 
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{One way ANOVA tables}
-
-\begin{enumerate}
-\item \newthought{A pilot study} was developed to investigate whether music
-influenced exam scores. Three groups of students listened to 10 minutes of
-Mozart, silence or heavy metal before an IQ test. The results of the IQ test
-are as follows
-
-\begin{table}[h]
-\centering
-\begin{tabular}{@{}l lllllll@{}}
-\toprule
-Mozart &  109 & 114 &  108 &  123 &  115 &  108 & 114\\
-Silence & 113 & 114 &  113 &  108 &  119 &  112 & 110 \\
-Heavy Metal & 103  & 94   &114 &  107 &  107 &  113 & 107\\
-\bottomrule
-\end{tabular}
-\caption{Results from the study on how music affects examination performance.}
-\end{table}
-\begin{enumerate}
-\item Construct a one-way ANOVA table. Are there differences between treatment groups?
-<<echo=echo, results=results>>=
-x1 = c(109, 114, 108, 123, 115, 108, 114)
-x2 = c(113, 114, 113, 108, 119, 112, 110)
-x3 = c(103, 94, 114, 107, 107, 113, 107)
-dd = data.frame(values = c(x1, x2, x3), type = rep(c("M", "S", "H"), each=7))
-m = aov(values ~ type, dd)
-summary(m)
-##The p value is around 0.056.
-##This suggests a difference may exist.
-@
-\item Check the standardised residuals of your model.
-
-<<F3, fig.keep='none', echo=echo, results=results>>=
-plot(fitted.values(m), rstandard(m))
-## Residual plot looks OK
-@
-
-\begin{marginfigure}
-\centering
-<<ref.label='F3', dev='pdf', out.width='\\textwidth', echo=FALSE>>=
-@
-\caption{Model diagnosics for the music data.}
-\end{marginfigure}
-
-\item Perform a multiple comparison test to determine where the difference lies.
-<<, echo=echo, results=results>>=
-TukeyHSD(m)
-@
-
-\end{enumerate}
-
-
-
-\end{enumerate}
-
-
-\newthought{The following sections} use the results of the Olympic heptathlon
-competition, Seoul, 1988. To enter the data into R, use the following commands
-
-<<>>=
-data(hep)
-##Remove the athletes names and final scores.
-hep_s = hep[,2:8]
-@ 
-
-\section{Hierarchical clustering}
-
-\newthought{Using the heptathlon} data set, carry out a clustering analysis. Try
-different distance methods and clustering functions.
-
-<<fig.keep="none", echo=echo, results=results>>=
-plot(hclust(dist(hep_s)), labels=hep[,1])
-@ 
-
-\section{Principal components analysis}
-
-\begin{enumerate}
-\item Calculate the correlation matrix of the \cc{hep} data set.
-<<echo=echo, results=results>>=
-##Round to 2dp
-signif(cor(hep_s), 2)
-@
-
-\item Carry out a PCA on this data set.\sidenote{Remember to remove the
-athletes names.}
-\begin{itemize}
-\item Keep \cc{score} in your PCA analysis. What happens and why? Do you think
-you should remove \cc{score}?
-<<echo=echo, results=results>>=
-##Remove:
-##1st column: athletes name
-##Last column: It's a combination of the other columns
-dd = hep[ ,2:8]
-
-##Run principle components
-prcomp(dd)
-@
-
-\item Do you think you need to scale the data?
-<<echo=echo, results=results>>=
-##Yes!. run800m dominates the loading since
-##the scales differ
-@
-
-\item Construct a biplot of the data.
-<<echo=echo, results=results, fig.keep="none">>=
-prcomp(dd, scale=TRUE)
-biplot(prcomp(dd, scale=TRUE))
-@
-
-\end{itemize}
-\end{enumerate}
-
-
-\section{Survival analysis}
-
-This final section, is meant to give you a taste at other statistical techniques
-available. R has many packages\sidenote{A package is just an ``add-on'' that
-provides new functionality.} available. To install a package, we use the command
-
-<<eval=FALSE>>=
-install.packages("survival")
-@ 
-
-\noindent Once the package is installed, we load it using \cc{library} function
-
-<<message=FALSE>>=
-library(survival)
-@ 
-
-\noindent The data set we will use is the \cc{lung} data set\sidenote{Survival in patients
-with advanced lung cancer from the North Central Cancer Treatment Group.
-Performance scores rate how well the patient can perform usual daily
-activities.} - this comes with the \cc{survival} package. To load this data
-set, we use the command
-
-<<>>=
-data(lung)
-@ 
-
-\noindent We the use the \cc{dim} function to extract the number of rows and
-columns
-
-<<>>=
-dim(lung)
-@ 
-
-\noindent This creates a data frame with the following columns
-\begin{itemize}
-\item \cc{inst}:       Institution code
-\item \cc{time}:       Survival time in days
-\item \cc{status}:     censoring status 1=censored, 2=dead
-\item \cc{age}:        Age in years
-\item \cc{sex}:        Male=1 Female=2
-\item \cc{ph.ecog}:    ECOG performance score (0=good 5=dead)
-\item \cc{ph.karno}:   Karnofsky performance score (bad=0-good=100) rated by physician
-\item \cc{pat.karno}:  Karnofsky performance score as rated by patient
-\item \cc{meal.cal}:   Calories consumed at meals
-\item \cc{wt.loss}:    Weight loss in last six months
-\end{itemize}      
-To begin, we create a \cc{Surv} object:\sidenote{Look at \cc{?Surv} for
-further details.}
-
-<<results="hide">>=
-Surv(lung$time, lung$status)
-@ 
-
-\noindent We can fit a Kaplein-Meier curve using the \cc{surfit} function:
-
-<<results="hide">>=
-survfit(Surv(lung$time, lung$status)~1)
-@ 
-
-\noindent and also plot survival curve
-
-<<fig.keep="none">>=
-plot(survfit(Surv(lung$time, lung$status)~1))
-@ 
-
-\noindent To fit the model using an additional covariate, we just alter the
-formula
-
-<<fig.keep="none">>=
-plot(survfit(Surv(lung$time, lung$status)~lung$sex))
-@ 
-
-\noindent \textbf{Task:} Load the \cc{heart} data set:\sidenote{Look at the help
-page: \cc{?heart}}
-
-<<>>=
-data(heart)
-@ 
-
-\noindent and make a \cc{Surv} object
-
-<<results="hide">>=
-Surv(heart$start, heart$stop, heart$event) 
-@ 
-
-\noindent Why are there three arguments in the above function? Construct a
-Kaplein-Meier plot. Look at the \cc{coxph} function. Try fitting a cox
-proportional hazard function.
-
-
-\section*{Solutions}
-
-Solutions are contained within this package:
-<<eval=FALSE>>=
-vignette("solutions2", package = "jrModelling")
-@
-
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{One way ANOVA tables}
+% 
+% \begin{enumerate}
+% \item \newthought{A pilot study} was developed to investigate whether music
+% influenced exam scores. Three groups of students listened to 10 minutes of
+% Mozart, silence or heavy metal before an IQ test. The results of the IQ test
+% are as follows
+% 
+% \begin{table}[h]
+% \centering
+% \begin{tabular}{@{}l lllllll@{}}
+% \toprule
+% Mozart &  109 & 114 &  108 &  123 &  115 &  108 & 114\\
+% Silence & 113 & 114 &  113 &  108 &  119 &  112 & 110 \\
+% Heavy Metal & 103  & 94   &114 &  107 &  107 &  113 & 107\\
+% \bottomrule
+% \end{tabular}
+% \caption{Results from the study on how music affects examination performance.}
+% \end{table}
+% \begin{enumerate}
+% \item Construct a one-way ANOVA table. Are there differences between treatment groups?
+% <<echo=echo, results=results>>=
+% x1 = c(109, 114, 108, 123, 115, 108, 114)
+% x2 = c(113, 114, 113, 108, 119, 112, 110)
+% x3 = c(103, 94, 114, 107, 107, 113, 107)
+% dd = data.frame(values = c(x1, x2, x3), type = rep(c("M", "S", "H"), each=7))
+% m = aov(values ~ type, dd)
+% summary(m)
+% ##The p value is around 0.056.
+% ##This suggests a difference may exist.
+% @
+% \item Check the standardised residuals of your model.
+% 
+% <<F3, fig.keep='none', echo=echo, results=results>>=
+% plot(fitted.values(m), rstandard(m))
+% ## Residual plot looks OK
+% @
+% 
+% \begin{marginfigure}
+% \centering
+% <<ref.label='F3', dev='pdf', out.width='\\textwidth', echo=FALSE>>=
+% @
+% \caption{Model diagnosics for the music data.}
+% \end{marginfigure}
+% 
+% \item Perform a multiple comparison test to determine where the difference lies.
+% <<, echo=echo, results=results>>=
+% TukeyHSD(m)
+% @
+% 
+% \end{enumerate}
+% 
+% 
+% 
+% \end{enumerate}
+% 
+% 
+% \newthought{The following sections} use the results of the Olympic heptathlon
+% competition, Seoul, 1988. To enter the data into R, use the following commands
+% 
+% <<>>=
+% data(hep)
+% ##Remove the athletes names and final scores.
+% hep_s = hep[,2:8]
+% @ 
+% 
+% \section{Hierarchical clustering}
+% 
+% \newthought{Using the heptathlon} data set, carry out a clustering analysis. Try
+% different distance methods and clustering functions.
+% 
+% <<fig.keep="none", echo=echo, results=results>>=
+% plot(hclust(dist(hep_s)), labels=hep[,1])
+% @ 
+% 
+% \section{Principal components analysis}
+% 
+% \begin{enumerate}
+% \item Calculate the correlation matrix of the \cc{hep} data set.
+% <<echo=echo, results=results>>=
+% ##Round to 2dp
+% signif(cor(hep_s), 2)
+% @
+% 
+% \item Carry out a PCA on this data set.\sidenote{Remember to remove the
+% athletes names.}
+% \begin{itemize}
+% \item Keep \cc{score} in your PCA analysis. What happens and why? Do you think
+% you should remove \cc{score}?
+% <<echo=echo, results=results>>=
+% ##Remove:
+% ##1st column: athletes name
+% ##Last column: It's a combination of the other columns
+% dd = hep[ ,2:8]
+% 
+% ##Run principle components
+% prcomp(dd)
+% @
+% 
+% \item Do you think you need to scale the data?
+% <<echo=echo, results=results>>=
+% ##Yes!. run800m dominates the loading since
+% ##the scales differ
+% @
+% 
+% \item Construct a biplot of the data.
+% <<echo=echo, results=results, fig.keep="none">>=
+% prcomp(dd, scale=TRUE)
+% biplot(prcomp(dd, scale=TRUE))
+% @
+% 
+% \end{itemize}
+% \end{enumerate}
+% 
+% 
+% \section{Survival analysis}
+% 
+% This final section, is meant to give you a taste at other statistical techniques
+% available. R has many packages\sidenote{A package is just an ``add-on'' that
+% provides new functionality.} available. To install a package, we use the command
+% 
+% <<eval=FALSE>>=
+% install.packages("survival")
+% @ 
+% 
+% \noindent Once the package is installed, we load it using \cc{library} function
+% 
+% <<message=FALSE>>=
+% library(survival)
+% @ 
+% 
+% \noindent The data set we will use is the \cc{lung} data set\sidenote{Survival in patients
+% with advanced lung cancer from the North Central Cancer Treatment Group.
+% Performance scores rate how well the patient can perform usual daily
+% activities.} - this comes with the \cc{survival} package. To load this data
+% set, we use the command
+% 
+% <<>>=
+% data(lung)
+% @ 
+% 
+% \noindent We the use the \cc{dim} function to extract the number of rows and
+% columns
+% 
+% <<>>=
+% dim(lung)
+% @ 
+% 
+% \noindent This creates a data frame with the following columns
+% \begin{itemize}
+% \item \cc{inst}:       Institution code
+% \item \cc{time}:       Survival time in days
+% \item \cc{status}:     censoring status 1=censored, 2=dead
+% \item \cc{age}:        Age in years
+% \item \cc{sex}:        Male=1 Female=2
+% \item \cc{ph.ecog}:    ECOG performance score (0=good 5=dead)
+% \item \cc{ph.karno}:   Karnofsky performance score (bad=0-good=100) rated by physician
+% \item \cc{pat.karno}:  Karnofsky performance score as rated by patient
+% \item \cc{meal.cal}:   Calories consumed at meals
+% \item \cc{wt.loss}:    Weight loss in last six months
+% \end{itemize}      
+% To begin, we create a \cc{Surv} object:\sidenote{Look at \cc{?Surv} for
+% further details.}
+% 
+% <<results="hide">>=
+% Surv(lung$time, lung$status)
+% @ 
+% 
+% \noindent We can fit a Kaplein-Meier curve using the \cc{surfit} function:
+% 
+% <<results="hide">>=
+% survfit(Surv(lung$time, lung$status)~1)
+% @ 
+% 
+% \noindent and also plot survival curve
+% 
+% <<fig.keep="none">>=
+% plot(survfit(Surv(lung$time, lung$status)~1))
+% @ 
+% 
+% \noindent To fit the model using an additional covariate, we just alter the
+% formula
+% 
+% <<fig.keep="none">>=
+% plot(survfit(Surv(lung$time, lung$status)~lung$sex))
+% @ 
+% 
+% \noindent \textbf{Task:} Load the \cc{heart} data set:\sidenote{Look at the help
+% page: \cc{?heart}}
+% 
+% <<>>=
+% data(heart)
+% @ 
+% 
+% \noindent and make a \cc{Surv} object
+% 
+% <<results="hide">>=
+% Surv(heart$start, heart$stop, heart$event) 
+% @ 
+% 
+% \noindent Why are there three arguments in the above function? Construct a
+% Kaplein-Meier plot. Look at the \cc{coxph} function. Try fitting a cox
+% proportional hazard function.
+% 
+% 
+% \section*{Solutions}
+% 
+% Solutions are contained within this package:
+% <<eval=FALSE>>=
+% vignette("solutions2", package = "jrModelling")
+% @
+% 
 
 \end{document}
