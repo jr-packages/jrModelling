@@ -2,8 +2,8 @@ Package: jrModelling
 Type: Package
 Title: Statistical Modelling with R
 Version: 0.1.0
-Authors@R: person("Colin", "Gillespie", 
-  email="colin@jumpingrivers.com", 
+Authors@R: person("Jamie", "Owen", 
+  email="jamie@jumpingrivers.com", 
   role = c("aut", "cre"))
 Description: Practicals and data sets for an Introduction to Statistical modelling.
 URL: http://jumpingrivers.com
@@ -15,11 +15,12 @@ Imports:
     shiny,
     ggplot2, 
     titanic,
-    jrData
+    mvtnorm
 Remotes: 
     jr-packages/jrData
 Suggests:
     survival,
-    knitr
+    knitr,
+    jrData
 VignetteBuilder: knitr
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1

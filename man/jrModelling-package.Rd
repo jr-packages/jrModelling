@@ -4,7 +4,7 @@
 \name{jrModelling-package}
 \alias{jrModelling-package}
 \alias{jrModelling}
-\title{Statistical Modellin by Jumping Rivers}
+\title{Statistical Modelling by Jumping Rivers}
 \description{
 Functions and datasets used in external R courses
 }

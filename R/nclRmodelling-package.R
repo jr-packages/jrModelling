@@ -1,4 +1,4 @@
-#' Statistical Modellin by Jumping Rivers
+#' Statistical Modelling by Jumping Rivers
 #' 
 #' Functions and datasets used in external R courses
 #' @name jrModelling-package
