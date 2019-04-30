@@ -11,12 +11,13 @@
 #' @import ggplot2
 #' @import shiny
 #' @export
-regressionExample = function(includecode = FALSE){
-  
-  appDir = system.file("shinyExamples", 
-                       "regression", package = "jrModelling")
-  if(appDir == ""){
-    stop("Could not find example directory. Try reinstalling `jrModelling`.", call. = FALSE)
+regressionExample = function(includecode = FALSE) {
+
+  app_dir = system.file("shinyExamples", "regression", package = "jrModelling")
+  if (app_dir == "") {
+    stop("Could not find example directory. Try reinstalling `jrModelling`.",
+         call. = FALSE)
   }
-  shiny::runApp(appDir, display.mode = ifelse(includecode,"showcase","normal"))
+  shiny::runApp(app_dir,
+                display.mode = ifelse(includecode, "showcase", "normal"))
 }

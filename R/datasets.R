@@ -182,12 +182,3 @@ NULL
 #' @source https://www.ncbi.nlm.nih.gov/pubmed/5676802
 #' @docType data
 NULL
-
-
-
-
-
-
-
-
-

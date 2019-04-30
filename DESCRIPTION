@@ -1,7 +1,7 @@
 Package: jrModelling
 Type: Package
 Title: Statistical Modelling with R
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: person("Jamie", "Owen", 
   email="jamie@jumpingrivers.com", 
   role = c("aut", "cre"))
@@ -21,6 +21,8 @@ Remotes:
 Suggests:
     survival,
     knitr,
-    jrData
+    jrData,
+    testthat,
+    lintr
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1
