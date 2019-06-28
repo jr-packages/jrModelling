@@ -24,6 +24,6 @@ Suggests:
     jrData,
     testthat,
     lintr,
-    cowsay
+    cowsay, DT
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1
