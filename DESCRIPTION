@@ -15,7 +15,9 @@ Imports:
     shiny,
     ggplot2, 
     titanic,
-    mvtnorm
+    mvtnorm,
+    rmarkdown,
+    tufte
 Remotes: 
     jr-packages/jrData
 Suggests:
@@ -24,6 +26,8 @@ Suggests:
     jrData,
     testthat,
     lintr,
-    cowsay, DT
+    cowsay,
+    DT
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1
+Encoding: UTF-8
