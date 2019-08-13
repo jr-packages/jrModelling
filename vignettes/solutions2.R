@@ -11,27 +11,55 @@ summary(m)
 ##This suggests temperature is useful
 
 ## ------------------------------------------
-##The p-value for the correlation is also 9.9e-09
-cor.test(x, y)
+cor(x, y)
 
-## ----F1, fig.keep='none'-------------------
-plot(x, y, xlab="Temp", ylab="Sales")
-abline(m, col=2, lty=2)
+## ----F1, fig.keep='none', message = FALSE, warning = FALSE----
+library("ggplot2")
+library("tibble")
+df = tibble(x = x, y = y)
+ggplot(df, aes(x = x, y = y)) +
+    geom_point() +
+    stat_smooth(
+        method = "lm", se = FALSE,
+        colour = "red", linetype = 2) + 
+    labs(x = "Temp", y = "Sales")
 
 ## ----fig.margin = TRUE, fig.cap="Scatterplot with the earnings data. Also shows the line of best fit.", out.width='\\textwidth', echo=FALSE----
-plot(x, y, xlab="Temp", ylab="Sales")
-abline(m, col=2, lty=2)
-text(5, 130, "r=0.983")
+ggplot(df, aes(x = x, y = y)) +
+    geom_point() +
+    stat_smooth(
+        method = "lm", se = FALSE,
+        colour = "red", linetype = 2) + 
+    labs(x = "Temp", y = "Sales") + 
+    annotate("label", x = 6, y = 125, label = "r = 0.983") + 
+    theme_bw()
 
 ## ---- fig.keep='none', eval = FALSE--------
-#  text(5, 130, "r=0.983")
+#  ggplot(df, aes(x = x, y = y)) +
+#  geom_point() +
+#  stat_smooth(
+#      method = "lm", se = FALSE,
+#      colour = "red", linetype = 2) +
+#  labs(x = "Temp", y = "Sales") +
+#  annotate("label", x = 6, y = 125, label = paste("r =", r))
 
-## ----F2, fig.keep='none'-------------------
+## ----F2, fig.keep='none', message = FALSE, warning = FALSE----
 ##Model diagnosics look good
-plot(fitted.values(m), rstandard(m))
+library("broom")
+m_aug = augment(m)
+ggplot(m_aug, aes(x = .fitted, y = .std.resid)) +
+    geom_point() +
+    geom_hline(
+        yintercept = c(0, -2, 2),
+        linetype = c(2, 3, 3),
+        colour = c("red", "green", "green")
+    )
 
 ## ----fig.keep='none'-----------------------
-qqnorm(rstandard(m))
+ggplot(m_aug, aes(sample = .std.resid)) +
+    stat_qq() +
+    geom_abline(colour = "steelblue",
+                linetype = 2) 
 ##Model diagnosics look good
 
 ## ----echo=FALSE----------------------------
@@ -45,16 +73,28 @@ m = lm(y~x)
 cor(x, y)
 
 ## ----fig.keep='none'-----------------------
-plot(x, y)
-abline(m)
+dfq2 = tibble(x = x, y = y)
+ggplot(dfq2, aes(x = x, y = y)) +
+    geom_point() +
+    stat_smooth(
+        method = "lm", se = FALSE,
+        colour = "red", linetype = 2) 
 
 ## ----fig.keep='none'-----------------------
-plot(fitted.values(m), rstandard(m), ylim=c(-2.5, 2.5))
-abline(h=c(-2, 0, 2), lty=3, col=4)
+m_aug = augment(m)
+ggplot(m_aug, aes(x = .fitted, y = .std.resid)) +
+    geom_point() +
+    geom_hline(
+        yintercept = c(0, -2, 2),
+        linetype = c(2, 3, 3),
+        colour = c("red", "green", "green")
+    )
 
 ## ----fig.keep='none'-----------------------
-qqnorm(rstandard(m))
-qqline(rstandard(m), col=4)
+ggplot(m_aug, aes(sample = .std.resid)) +
+    stat_qq() +
+    geom_abline(colour = "steelblue",
+                linetype = 2) 
 
 ## ---- echo = TRUE, message = FALSE---------
 library("jrModelling")
@@ -64,16 +104,31 @@ data(graves)
 fit = lm(OI ~ age + Sex, data = graves)
 
 ## ----fig.keep='none'-----------------------
-plot(graves$OI, rstandard(fit))
-abline(h=c(-2, 0, 2), col=2, lty=3)
-plot(graves$age, rstandard(fit))
-abline(h=c(-2, 0, 2), col=2, lty=3)
-plot(graves$Sex, rstandard(fit))
-abline(h=c(-2, 0, 2), col=2, lty=3)
-plot(fitted.values(fit), rstandard(fit))
-abline(h=c(-2, 0, 2), col=2, lty=3)
-qqnorm(rstandard(fit))
-qqline(rstandard(fit), col = 2, lty = 2)
+fit_aug = augment(fit)
+ggplot(fit_aug, aes(x = OI,
+                    y = .std.resid)) +
+    geom_point() +
+    geom_hline(yintercept = c(0, -2, 2),
+               linetype = c(2, 3, 3),
+               colour = c("red", "green", "green"))
+
+ggplot(fit_aug, aes(x = age, 
+                    y = .std.resid)) +
+    geom_point() +
+    geom_hline(yintercept = c(0, -2, 2),
+               linetype = c(2, 3, 3),
+               colour = c("red", "green", "green"))
+
+ggplot(fit_aug, aes(x = .fitted, y = .std.resid)) +
+    geom_point() + 
+    geom_hline(yintercept = c(0,-2, 2), 
+                 linetype = c(2,3,3), 
+                 colour = c("red", "green", "green"))
+
+ggplot(fit_aug, aes(sample = .std.resid)) +
+    stat_qq() +
+    geom_abline(colour = "steelblue",
+                linetype = 2)
 
 # The q-q plot shows the residuals lying close to the fitted straight 
 # line which suggests that the normality assumption is satisfied.
@@ -93,18 +148,31 @@ data(drphil)
 x1 = c(109, 114, 108, 123, 115, 108, 114)
 x2 = c(113, 114, 113, 108, 119, 112, 110)
 x3 = c(103, 94, 114, 107, 107, 113, 107)
-dd = data.frame(values = c(x1, x2, x3), type = rep(c("M", "S", "H"), each=7))
+dd = tibble(values = c(x1, x2, x3), type = rep(c("M", "S", "H"), each=7))
 m = aov(values ~ type, dd)
 summary(m)
 ##The p value is around 0.056.
 ##This suggests a difference may exist.
 
 ## ----F3, fig.keep='none'-------------------
-plot(fitted.values(m), rstandard(m))
+m_aug = augment(m)
+ggplot(m_aug, aes(x = .fitted, y = .std.resid)) +
+    geom_point() + 
+    geom_hline(yintercept = c(0,-2, 2), 
+                 linetype = c(2,3,3), 
+                 colour = c("red", "green", "green"))
 ## Residual plot looks OK
 
-## ----fig.margin = TRUE, out.width='\\textwidth', echo=FALSE, fig.cap = "Model diagnosics for the music data."----
-plot(fitted.values(m), rstandard(m))
+## ----fig.margin = TRUE, out.width='\\textwidth', echo=FALSE, fig.cap = "Model diagnosics for the music data.", message = FALSE, warning = FALSE----
+ggplot(m_aug, aes(x = .fitted, y = .std.resid)) +
+    geom_point() + 
+    geom_hline(yintercept = c(0,-2, 2), 
+                 linetype = c(2,3,3), 
+                 colour = c("red", "green", "green")) +
+    ylim(-2.5, 2.5) +
+    theme_bw() +
+    labs(x = "Fitted values",
+         y = "Standardised Residuals")
 
 ## ------------------------------------------
 TukeyHSD(m)

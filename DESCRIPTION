@@ -17,7 +17,10 @@ Imports:
     titanic,
     mvtnorm,
     rmarkdown,
-    tufte
+    tufte, 
+    gridExtra,
+    broom,
+    tibble
 Remotes: 
     jr-packages/jrData
 Suggests:
