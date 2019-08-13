@@ -1,17 +1,18 @@
 \noindent I've starred, $^*$, some of the questions. This indicates that we didn't directly cover the material in the lecture. If you are particular interested in this statistical area, try the question. Otherwise, just move on.
-    ```{r, echo=FALSE}
+    ```{r, echo=FALSE, message = FALSE, warning = FALSE}
+    library("tibble")
     x = c(78.64,79.01, 79.57, 79.52, 80.71, 79.95, 78.50,
       79.10, 81.98, 80.09, 80.29, 80.22)
     y = c(81.92, 81.12, 82.47, 82.86, 82.89, 82.45,
          82.51, 81.11, 83.07, 82.77, 82.38, 83.14)
-    dd = data.frame(x, y)
+    dd = tibble(x = x, y = y)
     ```
     ```{r, echo=FALSE}
     x = c(78.64,79.01, 79.57, 79.52, 80.71, 79.95, 78.50,
       79.10, 81.98, 80.09, 80.29, 80.22)
     y = c(81.92, 81.12, 82.47, 82.86, 82.89, 82.45,
          82.51, 81.11, 83.07, 82.77, 82.38, 83.14)
-    dd = data.frame(x, y)
+    dd = tibble(x = x, y = y)
     ## var(y)
     ## var.test(x, y)
     ```
@@ -43,20 +44,21 @@
 
 We conducted an experiment and collected the data in the tables above. This data set isn't paired.^[I intentionally didn't make the data available for download so you would have to think about how to enter the data. You could enter it either Excel and import or directly into R.]
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
+library("tibble")
 ##Data for question 1
 ## Easier using Excel and export as CSV
 x = c(78.64,79.01, 79.57, 79.52, 80.71, 79.95, 78.50,
   79.10, 81.98, 80.09, 80.29, 80.22)
 y = c(81.92, 81.12, 82.47, 82.86, 82.89, 82.45,
      82.51, 81.11, 83.07, 82.77, 82.38, 83.14)
-dd = data.frame(x, y)
+dd = tibble(x = x, y = y)
 ```
 
 a) Input the data into R^[Here I would suggest input the data into Excel and using `read_csv()`]. Combine the two data sets into a single data frame.
     ```{r, echo=FALSE}
-    d1 = data.frame(value = x)
-    d2 = data.frame(value = y)
+    d1 = tibble(value = x)
+    d2 = tibble(value = y)
     ```
     ```{r,  eval=FALSE}
     ## Suppose you have two separate data files. Here is some code that will help ## you combine
@@ -127,10 +129,11 @@ executives distributed uniformly across zodiac signs?
     ```
 
 
-b) What are the expected values for each zodiac sign?
-    ```{r,  }
-    ##expected values
-    (expected = m[["expected"]])
+b) What are the expected values for each zodiac sign? Hint: Use `augment()`
+    ```{r, message = FALSE, warning = FALSE }
+    library("broom")
+    m_aug = augment(m)
+    m_aug$.expected
     ```
 
 c) The formula for calculating the residuals^[These residuals are called Pearson residuals. Hint: use `str(m)` to extract the residuals.] is given by
@@ -139,8 +142,7 @@ c) The formula for calculating the residuals^[These residuals are called Pearson
   \]
 Which residuals are large?
     ```{r,  }
-    ##Residuals
-    m[["residuals"]]
+    m_aug$.residuals
     ```
 
 ## Question 3
@@ -172,7 +174,7 @@ tattoo status.
     ```{r, warning=FALSE, }
     h = c(17, 8, 22)
     nh = c(35, 53, 491)
-    dd = data.frame(h, nh)
+    dd = tibble(h, nh)
     m = chisq.test(dd)
     ```
 
@@ -181,7 +183,8 @@ cells have expected values of at least five, otherwise the distributional
 assumptions may be invalid. What are the expected values of each cell. Which
 cells have an expected value less than five?
     ```{r,  }
-    m[["expected"]]
+    m_aug = augment(m)
+    m_aug$.expected
     ```
 
 c) Since some of the cells have expected values slightly less than five, we

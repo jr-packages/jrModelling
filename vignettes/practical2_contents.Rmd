@@ -14,43 +14,68 @@ in the model?
     ##This suggests temperature is useful
     ```
 
-2. Calculate the sample correlation coefficient $r$. Perform a hypothesis
-test, where $H_0: \rho =0$ and $H_1: \rho \ne 0$.^[See section 2.6 in
-your notes.] Compare this $p$-value to the $p$-value
-for testing if $\beta_1 =0$.
+2. Calculate the sample correlation coefficient $r$.
     ```{r, }
-    ##The p-value for the correlation is also 9.9e-09
-    cor.test(x, y)
+    cor(x, y)
     ```
 
-3. Construct a graph of the data. Add a dashed red line indicating the line
+3. Construct a graph of the data. You can use **ggplot2** or base, but as in the notes we'll be using **ggplot2** for the solutions. Add a dashed red line indicating the line
 of best fit.
-    ```{r,F1, fig.keep='none'}
-    plot(x, y, xlab="Temp", ylab="Sales")
-    abline(m, col=2, lty=2)
+    ```{r,F1, fig.keep='none', message = FALSE, warning = FALSE}
+    library("ggplot2")
+    library("tibble")
+    df = tibble(x = x, y = y)
+    ggplot(df, aes(x = x, y = y)) +
+        geom_point() +
+        stat_smooth(
+            method = "lm", se = FALSE,
+            colour = "red", linetype = 2) + 
+        labs(x = "Temp", y = "Sales")
     ```
 
 ```{r,fig.margin = TRUE, fig.cap="Scatterplot with the earnings data. Also shows the line of best fit.", out.width='\\textwidth', echo=FALSE}
-plot(x, y, xlab="Temp", ylab="Sales")
-abline(m, col=2, lty=2)
-text(5, 130, "r=0.983")
+ggplot(df, aes(x = x, y = y)) +
+    geom_point() +
+    stat_smooth(
+        method = "lm", se = FALSE,
+        colour = "red", linetype = 2) + 
+    labs(x = "Temp", y = "Sales") + 
+    annotate("label", x = 6, y = 125, label = "r = 0.983") + 
+    theme_bw()
 ```
 
-4. Using the `text()` function, add the text *r = 0.983* to your plot.
+4. Using the `annotate()` function, add the text *r = 0.983* to your plot. See `?annotate` for more details or ask your presenter!
     ```{r, fig.keep='none', eval = FALSE}
-    text(5, 130, "r=0.983")
+    ggplot(df, aes(x = x, y = y)) +
+    geom_point() +
+    stat_smooth(
+        method = "lm", se = FALSE,
+        colour = "red", linetype = 2) + 
+    labs(x = "Temp", y = "Sales") + 
+    annotate("label", x = 6, y = 125, label = paste("r =", r))
     ```
 
 5. Plot the standardised residuals against the fitted values. Does the graph
-look random?
-    ```{r,F2, fig.keep='none', }
+look random? Hint: Use `augment()`
+    ```{r,F2, fig.keep='none', message = FALSE, warning = FALSE}
     ##Model diagnosics look good
-    plot(fitted.values(m), rstandard(m))
+    library("broom")
+    m_aug = augment(m)
+    ggplot(m_aug, aes(x = .fitted, y = .std.resid)) +
+        geom_point() +
+        geom_hline(
+            yintercept = c(0, -2, 2),
+            linetype = c(2, 3, 3),
+            colour = c("red", "green", "green")
+        )
     ```
 
 6. Construct a q-q plot of the standardised residuals.
     ```{r,fig.keep='none', }
-    qqnorm(rstandard(m))
+    ggplot(m_aug, aes(sample = .std.resid)) +
+        stat_qq() +
+        geom_abline(colour = "steelblue",
+                    linetype = 2) 
     ##Model diagnosics look good
     ```
 
@@ -64,9 +89,9 @@ y = c(73, 57, 81, 94, 110, 124, 134, 139, 124, 103, 81, 80)
 \newthought{In a study} of the effect of temperature $x$ on yield $y$ of a chemical process, the data in table \ref{T2} was obtained.
 
 1. Perform a linear regression of $y$ on $x$.
-```{r,}
-m = lm(y~x)
-```
+    ```{r,}
+    m = lm(y~x)
+    ```
 
 2. Calculate the sample correlation coefficient $r$.
     ```{r,}
@@ -74,20 +99,32 @@ m = lm(y~x)
     ```
 3. Plot the data and add the line of best fit to your plot.
     ```{r,fig.keep='none'}
-    plot(x, y)
-    abline(m)
+    dfq2 = tibble(x = x, y = y)
+    ggplot(dfq2, aes(x = x, y = y)) +
+        geom_point() +
+        stat_smooth(
+            method = "lm", se = FALSE,
+            colour = "red", linetype = 2) 
     ```
 
-4. Plot the standardised residuals against the fitted values.
+4. Plot the standardised residuals against the fitted values. Hint: Use `augment()`
     ```{r,fig.keep='none'}
-    plot(fitted.values(m), rstandard(m), ylim=c(-2.5, 2.5))
-    abline(h=c(-2, 0, 2), lty=3, col=4)
+    m_aug = augment(m)
+    ggplot(m_aug, aes(x = .fitted, y = .std.resid)) +
+        geom_point() +
+        geom_hline(
+            yintercept = c(0, -2, 2),
+            linetype = c(2, 3, 3),
+            colour = c("red", "green", "green")
+        )
     ```
 
 5. Construct a q-q plot of the Standardised residuals.
     ```{r,fig.keep='none'}
-    qqnorm(rstandard(m))
-    qqline(rstandard(m), col=4)
+    ggplot(m_aug, aes(sample = .std.resid)) +
+        stat_qq() +
+        geom_abline(colour = "steelblue",
+                    linetype = 2) 
     ```
 
 
@@ -148,16 +185,31 @@ data(graves)
 2. Examine the Standardised residual plots. Is there anything that would
 suggest you have a problem with your model? What do you do?
     ```{r,fig.keep='none'}
-    plot(graves$OI, rstandard(fit))
-    abline(h=c(-2, 0, 2), col=2, lty=3)
-    plot(graves$age, rstandard(fit))
-    abline(h=c(-2, 0, 2), col=2, lty=3)
-    plot(graves$Sex, rstandard(fit))
-    abline(h=c(-2, 0, 2), col=2, lty=3)
-    plot(fitted.values(fit), rstandard(fit))
-    abline(h=c(-2, 0, 2), col=2, lty=3)
-    qqnorm(rstandard(fit))
-    qqline(rstandard(fit), col = 2, lty = 2)
+    fit_aug = augment(fit)
+    ggplot(fit_aug, aes(x = OI,
+                        y = .std.resid)) +
+        geom_point() +
+        geom_hline(yintercept = c(0, -2, 2),
+                   linetype = c(2, 3, 3),
+                   colour = c("red", "green", "green"))
+
+    ggplot(fit_aug, aes(x = age, 
+                        y = .std.resid)) +
+        geom_point() +
+        geom_hline(yintercept = c(0, -2, 2),
+                   linetype = c(2, 3, 3),
+                   colour = c("red", "green", "green"))
+    
+    ggplot(fit_aug, aes(x = .fitted, y = .std.resid)) +
+        geom_point() + 
+        geom_hline(yintercept = c(0,-2, 2), 
+                     linetype = c(2,3,3), 
+                     colour = c("red", "green", "green"))
+    
+    ggplot(fit_aug, aes(sample = .std.resid)) +
+        stat_qq() +
+        geom_abline(colour = "steelblue",
+                    linetype = 2)
     
     # The q-q plot shows the residuals lying close to the fitted straight 
     # line which suggests that the normality assumption is satisfied.
@@ -218,21 +270,34 @@ Heavy Metal & 103  & 94   &114 &  107 &  107 &  113 & 107\\
     x1 = c(109, 114, 108, 123, 115, 108, 114)
     x2 = c(113, 114, 113, 108, 119, 112, 110)
     x3 = c(103, 94, 114, 107, 107, 113, 107)
-    dd = data.frame(values = c(x1, x2, x3), type = rep(c("M", "S", "H"), each=7))
+    dd = tibble(values = c(x1, x2, x3), type = rep(c("M", "S", "H"), each=7))
     m = aov(values ~ type, dd)
     summary(m)
     ##The p value is around 0.056.
     ##This suggests a difference may exist.
     ```
 
-2. Check the standardised residuals of your model.
+2. Check the standardised residuals of your model using `augment()` and **ggplot2**
     ```{r,F3, fig.keep='none',  }
-    plot(fitted.values(m), rstandard(m))
+    m_aug = augment(m)
+    ggplot(m_aug, aes(x = .fitted, y = .std.resid)) +
+        geom_point() + 
+        geom_hline(yintercept = c(0,-2, 2), 
+                     linetype = c(2,3,3), 
+                     colour = c("red", "green", "green"))
     ## Residual plot looks OK
     ```
 
-    ```{r,fig.margin = TRUE, out.width='\\textwidth', echo=FALSE, fig.cap = "Model diagnosics for the music data."}
-    plot(fitted.values(m), rstandard(m))
+    ```{r,fig.margin = TRUE, out.width='\\textwidth', echo=FALSE, fig.cap = "Model diagnosics for the music data.", message = FALSE, warning = FALSE}
+    ggplot(m_aug, aes(x = .fitted, y = .std.resid)) +
+        geom_point() + 
+        geom_hline(yintercept = c(0,-2, 2), 
+                     linetype = c(2,3,3), 
+                     colour = c("red", "green", "green")) +
+        ylim(-2.5, 2.5) +
+        theme_bw() +
+        labs(x = "Fitted values",
+             y = "Standardised Residuals")
     ```
 
 3. Perform a multiple comparison test to determine where the difference lies.
