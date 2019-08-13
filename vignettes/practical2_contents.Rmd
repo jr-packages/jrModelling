@@ -1,0 +1,359 @@
+## Question 1 - Simple Linear Regression
+
+\newthought{Consider the} data in table \ref{T1} for ice cream sales at Luigi
+Minchella's ice cream parlour.
+
+1. Perform a linear regression of $y$ on $x$. Should temperature be included
+in the model?
+    ```{r, }
+    x = c(4,4,7,8,12,15,16,17,14,11,7,5)
+    y = c(73, 57, 81, 94, 110, 124, 134, 139, 124, 103, 81, 80)
+    m = lm(y~x)
+    summary(m)
+    ##The p-value for the gradient is 9.9e-09
+    ##This suggests temperature is useful
+    ```
+
+2. Calculate the sample correlation coefficient $r$.
+    ```{r, }
+    cor(x, y)
+    ```
+
+3. Construct a graph of the data. You can use **ggplot2** or base, but as in the notes we'll be using **ggplot2** for the solutions. Add a dashed red line indicating the line
+of best fit.
+    ```{r,F1, fig.keep='none', message = FALSE, warning = FALSE}
+    library("ggplot2")
+    library("tibble")
+    df = tibble(x = x, y = y)
+    ggplot(df, aes(x = x, y = y)) +
+        geom_point() +
+        stat_smooth(
+            method = "lm", se = FALSE,
+            colour = "red", linetype = 2) + 
+        labs(x = "Temp", y = "Sales")
+    ```
+
+```{r,fig.margin = TRUE, fig.cap="Scatterplot with the earnings data. Also shows the line of best fit.", out.width='\\textwidth', echo=FALSE}
+ggplot(df, aes(x = x, y = y)) +
+    geom_point() +
+    stat_smooth(
+        method = "lm", se = FALSE,
+        colour = "red", linetype = 2) + 
+    labs(x = "Temp", y = "Sales") + 
+    annotate("label", x = 6, y = 125, label = "r = 0.983") + 
+    theme_bw()
+```
+
+4. Using the `annotate()` function, add the text *r = 0.983* to your plot. See `?annotate` for more details or ask your presenter!
+    ```{r, fig.keep='none', eval = FALSE}
+    ggplot(df, aes(x = x, y = y)) +
+    geom_point() +
+    stat_smooth(
+        method = "lm", se = FALSE,
+        colour = "red", linetype = 2) + 
+    labs(x = "Temp", y = "Sales") + 
+    annotate("label", x = 6, y = 125, label = paste("r =", r))
+    ```
+
+5. Plot the standardised residuals against the fitted values. Does the graph
+look random? Hint: Use `augment()`
+    ```{r,F2, fig.keep='none', message = FALSE, warning = FALSE}
+    ##Model diagnosics look good
+    library("broom")
+    m_aug = augment(m)
+    ggplot(m_aug, aes(x = .fitted, y = .std.resid)) +
+        geom_point() +
+        geom_hline(
+            yintercept = c(0, -2, 2),
+            linetype = c(2, 3, 3),
+            colour = c("red", "green", "green")
+        )
+    ```
+
+6. Construct a q-q plot of the standardised residuals.
+    ```{r,fig.keep='none', }
+    ggplot(m_aug, aes(sample = .std.resid)) +
+        stat_qq() +
+        geom_abline(colour = "steelblue",
+                    linetype = 2) 
+    ##Model diagnosics look good
+    ```
+
+```{r,echo=FALSE}
+x = c(4, 4, 7, 8, 12, 15, 16, 17, 14, 11, 7, 5)
+y = c(73, 57, 81, 94, 110, 124, 134, 139, 124, 103, 81, 80)
+```
+
+## Question 2 - Simple Linear Regression
+
+\newthought{In a study} of the effect of temperature $x$ on yield $y$ of a chemical process, the data in table \ref{T2} was obtained.
+
+1. Perform a linear regression of $y$ on $x$.
+    ```{r,}
+    m = lm(y~x)
+    ```
+
+2. Calculate the sample correlation coefficient $r$.
+    ```{r,}
+    cor(x, y)
+    ```
+3. Plot the data and add the line of best fit to your plot.
+    ```{r,fig.keep='none'}
+    dfq2 = tibble(x = x, y = y)
+    ggplot(dfq2, aes(x = x, y = y)) +
+        geom_point() +
+        stat_smooth(
+            method = "lm", se = FALSE,
+            colour = "red", linetype = 2) 
+    ```
+
+4. Plot the standardised residuals against the fitted values. Hint: Use `augment()`
+    ```{r,fig.keep='none'}
+    m_aug = augment(m)
+    ggplot(m_aug, aes(x = .fitted, y = .std.resid)) +
+        geom_point() +
+        geom_hline(
+            yintercept = c(0, -2, 2),
+            linetype = c(2, 3, 3),
+            colour = c("red", "green", "green")
+        )
+    ```
+
+5. Construct a q-q plot of the Standardised residuals.
+    ```{r,fig.keep='none'}
+    ggplot(m_aug, aes(sample = .std.resid)) +
+        stat_qq() +
+        geom_abline(colour = "steelblue",
+                    linetype = 2) 
+    ```
+
+
+\begin{table}[h]
+\resizebox{1.05\textwidth}{!}{
+\centering
+\begin{tabular}{@{}l llllll llllll@{}}
+\toprule
+Month  &Jan	&Feb	&Mar	&Apr	&May	&Jun	&Jul	&Aug	&Sep
+&Oct	&Nov	&Dec \\ 
+\midrule
+$x$, $^\textrm{o}$C&4&4	&7	&8	&12	&15	&16	&17	&14	&11	&7	&5	\\
+$y$, $\pounds$000's&73&57&81	&94	&110	&124	&134	&139	&124
+&103	&81	&80 \\ 
+\bottomrule
+\end{tabular}}
+\caption{Monthly sales data from Luigi Minchella's ice
+cream parlour.}\label{T1}
+\end{table}
+\begin{table}[b]
+\centering
+\begin{tabular}{@{}l llllll llllll@{}}
+\toprule
+$x$  & 25 & 26 & 27 & 28 & 29 & 30 & 31 & 32 & 33 & 34 & 35 & 36 \\
+\midrule
+$y$  & 10 & 16 & 13 & 17 & 20 & 18 & 19 & 23 & 25 & 22 & 29 & 26 \\ 
+\bottomrule
+\end{tabular}
+\caption{Twelve measurements from a study of temperature on yield.}\label{T2}
+\end{table}
+
+
+\clearpage
+
+## Question 3 - Multiple Linear Regression
+
+\newthought{The data} are from 101 consecutive patients attending a combined
+thyroid-eye clinic. The patients have an endocrine disorder, Graves'
+Ophthalmopathy, which affects various aspects of their eyesight. The
+ophthalmologist measures various aspects of their eyesight and constructs an
+overall index of how the disease affects their eyesight. This is the
+Ophthalmic Index (OI) given in the dataset. The age of the patient and their
+sex are also recorded. In practice, and as this is a chronic condition which
+can be ameliorated but not cured, the OI would be monitored at successive
+clinic visits to check on the patient's progress. However, these data are
+obtained at presentation. We are interested in how OI changes with age and
+gender. The data can be obtained from
+```{r, echo = TRUE, message = FALSE}
+library("jrModelling")
+data(graves)
+```
+
+1. Fit the multivariate regression model predicting OI from age and gender.
+    ```{r,fig.keep='none'}
+    fit = lm(OI ~ age + Sex, data = graves)
+    ```
+
+2. Examine the Standardised residual plots. Is there anything that would
+suggest you have a problem with your model? What do you do?
+    ```{r,fig.keep='none'}
+    fit_aug = augment(fit)
+    ggplot(fit_aug, aes(x = OI,
+                        y = .std.resid)) +
+        geom_point() +
+        geom_hline(yintercept = c(0, -2, 2),
+                   linetype = c(2, 3, 3),
+                   colour = c("red", "green", "green"))
+
+    ggplot(fit_aug, aes(x = age, 
+                        y = .std.resid)) +
+        geom_point() +
+        geom_hline(yintercept = c(0, -2, 2),
+                   linetype = c(2, 3, 3),
+                   colour = c("red", "green", "green"))
+    
+    ggplot(fit_aug, aes(x = .fitted, y = .std.resid)) +
+        geom_point() + 
+        geom_hline(yintercept = c(0,-2, 2), 
+                     linetype = c(2,3,3), 
+                     colour = c("red", "green", "green"))
+    
+    ggplot(fit_aug, aes(sample = .std.resid)) +
+        stat_qq() +
+        geom_abline(colour = "steelblue",
+                    linetype = 2)
+    
+    # The q-q plot shows the residuals lying close to the fitted straight 
+    # line which suggests that the normality assumption is satisfied.
+    # The residuals in the first plot appear to show a pattern. 
+    # Consider transforming the response variable or the explanatory variables
+    # or adding a square term / interaction term to your model.
+    ```
+
+## Question 4 - Multiple Linear Regression
+
+\newthought{Dr Phil} comes to see you with his data. He believes that IQ can be
+predicted by the number of years education. Dr Phil does not differentiate
+between primary, secondary and tertiary education. He has four variables:
+
+- `IQ` - the estimated IQ of the person (the response variable);
+- `AgeBegin` - the age of the person when they commenced education;
+- `AgeEnd` - the age of the person when they finished education;
+- `TotalYears` - the total number of years a person spent in education.
+
+The data can be obtained from:
+```{r,}
+data(drphil)
+```
+
+Read the data into R and fit the linear regression model:
+\[
+IQ = \beta_0 + \beta_1 AgeBegin + \beta_2 AgeEnd + \beta_3 TotalYears + \epsilon
+\]
+Explain what is wrong with this model? Suggest a possible remedy. 
+```{r, }
+(m = lm(IQ ~ AgeBegin + AgeEnd + TotalYears, data=drphil))
+#The problem is TotalYears = AgeEnd - AgeBegin
+#Solution: remove TotalYears
+```
+
+
+## Question 5 = One way ANOVA tables
+
+\newthought{A pilot study} was developed to investigate whether music
+influenced exam scores. Three groups of students listened to 10 minutes of
+Mozart, silence or heavy metal before an IQ test. The results of the IQ test
+are as follows
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}l lllllll@{}}
+\toprule
+Mozart &  109 & 114 &  108 &  123 &  115 &  108 & 114\\
+Silence & 113 & 114 &  113 &  108 &  119 &  112 & 110 \\
+Heavy Metal & 103  & 94   &114 &  107 &  107 &  113 & 107\\
+\bottomrule
+\end{tabular}
+\caption{Results from the study on how music affects examination performance.}
+\end{table}
+
+1. Construct a one-way ANOVA table. Are there differences between treatment groups?
+    ```{r}
+    x1 = c(109, 114, 108, 123, 115, 108, 114)
+    x2 = c(113, 114, 113, 108, 119, 112, 110)
+    x3 = c(103, 94, 114, 107, 107, 113, 107)
+    dd = tibble(values = c(x1, x2, x3), type = rep(c("M", "S", "H"), each=7))
+    m = aov(values ~ type, dd)
+    summary(m)
+    ##The p value is around 0.056.
+    ##This suggests a difference may exist.
+    ```
+
+2. Check the standardised residuals of your model using `augment()` and **ggplot2**
+    ```{r,F3, fig.keep='none',  }
+    m_aug = augment(m)
+    ggplot(m_aug, aes(x = .fitted, y = .std.resid)) +
+        geom_point() + 
+        geom_hline(yintercept = c(0,-2, 2), 
+                     linetype = c(2,3,3), 
+                     colour = c("red", "green", "green"))
+    ## Residual plot looks OK
+    ```
+
+    ```{r,fig.margin = TRUE, out.width='\\textwidth', echo=FALSE, fig.cap = "Model diagnosics for the music data.", message = FALSE, warning = FALSE}
+    ggplot(m_aug, aes(x = .fitted, y = .std.resid)) +
+        geom_point() + 
+        geom_hline(yintercept = c(0,-2, 2), 
+                     linetype = c(2,3,3), 
+                     colour = c("red", "green", "green")) +
+        ylim(-2.5, 2.5) +
+        theme_bw() +
+        labs(x = "Fitted values",
+             y = "Standardised Residuals")
+    ```
+
+3. Perform a multiple comparison test to determine where the difference lies.
+```{r,  }
+TukeyHSD(m)
+```
+
+
+
+
+\newthought{The following sections} use the results of the Olympic heptathlon
+competition, Seoul, 1988. To enter the data into R, use the following commands
+```{r, echo = TRUE}
+data(hep)
+##Remove the athletes names and final scores.
+hep_s = hep[,2:8]
+```
+
+## Question 6 - Hierarchical clustering
+
+\newthought{Using the heptathlon} data set, carry out a clustering analysis. Try
+different distance methods and clustering functions.
+
+```{r,fig.keep="none"}
+plot(hclust(dist(hep_s)), labels=hep[,1])
+```
+
+## Question 7 - Principal components analysis
+
+1. Calculate the correlation matrix of the `hep` data set.
+    ```{r, }
+    ##Round to 2dp
+    signif(cor(hep_s), 2)
+    ```
+
+2. Carry out a PCA on this data set.^[Remember to remove the
+athletes names.] Keep `score` in your PCA analysis. What happens and why? Do you think
+you should remove `score`?
+    ```{r}
+    ##Remove:
+    ##1st column: athletes name
+    ##Last column: It's a combination of the other columns
+    dd = hep[ ,2:8]
+    
+    ##Run principle components
+    prcomp(dd)
+    ```
+
+3. Do you think you need to scale the data?
+    ```{r, }
+    ##Yes!. run800m dominates the loading since
+    ##the scales differ
+    ```
+
+4. Construct a biplot of the data.
+    ```{r,  fig.keep="none"}
+    prcomp(dd, scale=TRUE)
+    biplot(prcomp(dd, scale=TRUE))
+    ```

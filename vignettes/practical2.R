@@ -1,129 +1,195 @@
-## ----echo=FALSE----------------------------------------------------------
-results = "hide"; echo = FALSE
+## ----include = FALSE-----------------------
+library(tufte)
+knitr::opts_chunk$set(results = "hide", echo = FALSE)
 
-## ----setup, include=FALSE, cache=FALSE----------
-library(knitr)
-opts_knit$set(out.format = "latex")
-knit_theme$set(knit_theme$get("greyscale0"))
-
-options(replace.assign=FALSE,width=50)
-
-opts_chunk$set(fig.path='knitr_figure/graphics-', 
-               cache.path='knitr_cache/graphics-', 
-               fig.align='center', 
-               dev='pdf', fig.width=5, fig.height=5, 
-               fig.show='hold', cache=FALSE, par=TRUE)
-knit_hooks$set(crop=hook_pdfcrop)
-
-knit_hooks$set(par=function(before, options, envir){
-  if (before && options$fig.show!='none') {
-    par(mar=c(3,3,2,1),cex.lab=.95,cex.axis=.9,
-        mgp=c(2,.7,0),tcl=-.01, las=1)
-  }}, crop=hook_pdfcrop)
-
-## ----echo=echo, results=results-----------------
+## ------------------------------------------
 x = c(4,4,7,8,12,15,16,17,14,11,7,5)
 y = c(73, 57, 81, 94, 110, 124, 134, 139, 124, 103, 81, 80)
 m = lm(y~x)
 summary(m)
 ##The p-value for the gradient is 9.9e-09
-##This suggests temperatue is useful
+##This suggests temperature is useful
 
-## ----echo=echo, results=results-----------------
-##The p-value for the correlation is also 9.9e-09
-cor.test(x, y)
+## ------------------------------------------
+cor(x, y)
 
-## ----F1, fig.keep='none', echo=(1:2)*echo-------
-plot(x, y, xlab="Temp", ylab="Sales")
-abline(m, col=2, lty=2)
-text(5, 130, "r=0.983")
+## ----F1, fig.keep='none', message = FALSE, warning = FALSE----
+library("ggplot2")
+library("tibble")
+df = tibble(x = x, y = y)
+ggplot(df, aes(x = x, y = y)) +
+    geom_point() +
+    stat_smooth(
+        method = "lm", se = FALSE,
+        colour = "red", linetype = 2) + 
+    labs(x = "Temp", y = "Sales")
 
-## ----ref.label='F1', dev='pdf', out.width='\\textwidth', echo=FALSE----
-plot(x, y, xlab="Temp", ylab="Sales")
-abline(m, col=2, lty=2)
-text(5, 130, "r=0.983")
+## ----fig.margin = TRUE, fig.cap="Scatterplot with the earnings data. Also shows the line of best fit.", out.width='\\textwidth', echo=FALSE----
+ggplot(df, aes(x = x, y = y)) +
+    geom_point() +
+    stat_smooth(
+        method = "lm", se = FALSE,
+        colour = "red", linetype = 2) + 
+    labs(x = "Temp", y = "Sales") + 
+    annotate("label", x = 6, y = 125, label = "r = 0.983") + 
+    theme_bw()
 
-## ----F1, echo=3*echo, results=results, fig.keep='none'----
-plot(x, y, xlab="Temp", ylab="Sales")
-abline(m, col=2, lty=2)
-text(5, 130, "r=0.983")
+## ---- fig.keep='none', eval = FALSE--------
+#  ggplot(df, aes(x = x, y = y)) +
+#  geom_point() +
+#  stat_smooth(
+#      method = "lm", se = FALSE,
+#      colour = "red", linetype = 2) +
+#  labs(x = "Temp", y = "Sales") +
+#  annotate("label", x = 6, y = 125, label = paste("r =", r))
 
-## ----F2, fig.keep='none', echo=echo-------------
+## ----F2, fig.keep='none', message = FALSE, warning = FALSE----
 ##Model diagnosics look good
-plot(fitted.values(m), rstandard(m))
+library("broom")
+m_aug = augment(m)
+ggplot(m_aug, aes(x = .fitted, y = .std.resid)) +
+    geom_point() +
+    geom_hline(
+        yintercept = c(0, -2, 2),
+        linetype = c(2, 3, 3),
+        colour = c("red", "green", "green")
+    )
 
-## ----fig.keep='none',echo=echo, results=results----
-qqnorm(rstandard(m))
+## ----fig.keep='none'-----------------------
+ggplot(m_aug, aes(sample = .std.resid)) +
+    stat_qq() +
+    geom_abline(colour = "steelblue",
+                linetype = 2) 
 ##Model diagnosics look good
 
-## ----echo=FALSE---------------------------------
+## ----echo=FALSE----------------------------
 x = c(4, 4, 7, 8, 12, 15, 16, 17, 14, 11, 7, 5)
 y = c(73, 57, 81, 94, 110, 124, 134, 139, 124, 103, 81, 80)
 
-## ----echo=echo----------------------------------
+## ------------------------------------------
 m = lm(y~x)
 
-## ----results=results,echo=echo------------------
+## ------------------------------------------
 cor(x, y)
 
-## ----echo=echo,fig.keep='none'------------------
-plot(x, y)
-abline(m)
+## ----fig.keep='none'-----------------------
+dfq2 = tibble(x = x, y = y)
+ggplot(dfq2, aes(x = x, y = y)) +
+    geom_point() +
+    stat_smooth(
+        method = "lm", se = FALSE,
+        colour = "red", linetype = 2) 
 
-## ----echo=echo,fig.keep='none'------------------
-plot(fitted.values(m), rstandard(m), ylim=c(-2.5, 2.5))
-abline(h=c(-2, 0, 2), lty=3, col=4)
+## ----fig.keep='none'-----------------------
+m_aug = augment(m)
+ggplot(m_aug, aes(x = .fitted, y = .std.resid)) +
+    geom_point() +
+    geom_hline(
+        yintercept = c(0, -2, 2),
+        linetype = c(2, 3, 3),
+        colour = c("red", "green", "green")
+    )
 
-## ----echo=echo,fig.keep='none'------------------
-qqnorm(rstandard(m))
-qqline(rstandard(m), col=4)
+## ----fig.keep='none'-----------------------
+ggplot(m_aug, aes(sample = .std.resid)) +
+    stat_qq() +
+    geom_abline(colour = "steelblue",
+                linetype = 2) 
 
-## -----------------------------------------------
+## ---- echo = TRUE, message = FALSE---------
 library("jrModelling")
 data(graves)
 
-## -----------------------------------------------
+## ----fig.keep='none'-----------------------
+fit = lm(OI ~ age + Sex, data = graves)
+
+## ----fig.keep='none'-----------------------
+fit_aug = augment(fit)
+ggplot(fit_aug, aes(x = OI,
+                    y = .std.resid)) +
+    geom_point() +
+    geom_hline(yintercept = c(0, -2, 2),
+               linetype = c(2, 3, 3),
+               colour = c("red", "green", "green"))
+
+ggplot(fit_aug, aes(x = age, 
+                    y = .std.resid)) +
+    geom_point() +
+    geom_hline(yintercept = c(0, -2, 2),
+               linetype = c(2, 3, 3),
+               colour = c("red", "green", "green"))
+
+ggplot(fit_aug, aes(x = .fitted, y = .std.resid)) +
+    geom_point() + 
+    geom_hline(yintercept = c(0,-2, 2), 
+                 linetype = c(2,3,3), 
+                 colour = c("red", "green", "green"))
+
+ggplot(fit_aug, aes(sample = .std.resid)) +
+    stat_qq() +
+    geom_abline(colour = "steelblue",
+                linetype = 2)
+
+# The q-q plot shows the residuals lying close to the fitted straight 
+# line which suggests that the normality assumption is satisfied.
+# The residuals in the first plot appear to show a pattern. 
+# Consider transforming the response variable or the explanatory variables
+# or adding a square term / interaction term to your model.
+
+## ------------------------------------------
 data(drphil)
 
-## ----echo=echo, results=results-----------------
+## ------------------------------------------
 (m = lm(IQ ~ AgeBegin + AgeEnd + TotalYears, data=drphil))
 #The problem is TotalYears = AgeEnd - AgeBegin
 #Solution: remove TotalYears
 
-## ----echo=echo, results=results-----------------
+## ------------------------------------------
 x1 = c(109, 114, 108, 123, 115, 108, 114)
 x2 = c(113, 114, 113, 108, 119, 112, 110)
 x3 = c(103, 94, 114, 107, 107, 113, 107)
-dd = data.frame(values = c(x1, x2, x3), type = rep(c("M", "S", "H"), each=7))
+dd = tibble(values = c(x1, x2, x3), type = rep(c("M", "S", "H"), each=7))
 m = aov(values ~ type, dd)
 summary(m)
 ##The p value is around 0.056.
 ##This suggests a difference may exist.
 
-## ----F3, fig.keep='none', echo=echo, results=results----
-plot(fitted.values(m), rstandard(m))
+## ----F3, fig.keep='none'-------------------
+m_aug = augment(m)
+ggplot(m_aug, aes(x = .fitted, y = .std.resid)) +
+    geom_point() + 
+    geom_hline(yintercept = c(0,-2, 2), 
+                 linetype = c(2,3,3), 
+                 colour = c("red", "green", "green"))
 ## Residual plot looks OK
 
-## ----ref.label='F3', dev='pdf', out.width='\\textwidth', echo=FALSE----
-plot(fitted.values(m), rstandard(m))
-## Residual plot looks OK
+## ----fig.margin = TRUE, out.width='\\textwidth', echo=FALSE, fig.cap = "Model diagnosics for the music data.", message = FALSE, warning = FALSE----
+ggplot(m_aug, aes(x = .fitted, y = .std.resid)) +
+    geom_point() + 
+    geom_hline(yintercept = c(0,-2, 2), 
+                 linetype = c(2,3,3), 
+                 colour = c("red", "green", "green")) +
+    ylim(-2.5, 2.5) +
+    theme_bw() +
+    labs(x = "Fitted values",
+         y = "Standardised Residuals")
 
-## ---- echo=echo, results=results----------------
+## ------------------------------------------
 TukeyHSD(m)
 
-## -----------------------------------------------
+## ---- echo = TRUE--------------------------
 data(hep)
 ##Remove the athletes names and final scores.
 hep_s = hep[,2:8]
 
-## ----fig.keep="none", echo=echo, results=results----
+## ----fig.keep="none"-----------------------
 plot(hclust(dist(hep_s)), labels=hep[,1])
 
-## ----echo=echo, results=results-----------------
+## ------------------------------------------
 ##Round to 2dp
 signif(cor(hep_s), 2)
 
-## ----echo=echo, results=results-----------------
+## ------------------------------------------
 ##Remove:
 ##1st column: athletes name
 ##Last column: It's a combination of the other columns
@@ -132,44 +198,11 @@ dd = hep[ ,2:8]
 ##Run principle components
 prcomp(dd)
 
-## ----echo=echo, results=results-----------------
+## ------------------------------------------
 ##Yes!. run800m dominates the loading since
 ##the scales differ
 
-## ----echo=echo, results=results, fig.keep="none"----
+## ----  fig.keep="none"---------------------
 prcomp(dd, scale=TRUE)
 biplot(prcomp(dd, scale=TRUE))
-
-## ----eval=FALSE---------------------------------
-#  install.packages("survival")
-
-## ----message=FALSE------------------------------
-library(survival)
-
-## -----------------------------------------------
-data(lung)
-
-## -----------------------------------------------
-dim(lung)
-
-## ----results="hide"-----------------------------
-Surv(lung$time, lung$status)
-
-## ----results="hide"-----------------------------
-survfit(Surv(lung$time, lung$status)~1)
-
-## ----fig.keep="none"----------------------------
-plot(survfit(Surv(lung$time, lung$status)~1))
-
-## ----fig.keep="none"----------------------------
-plot(survfit(Surv(lung$time, lung$status)~lung$sex))
-
-## -----------------------------------------------
-data(heart)
-
-## ----results="hide"-----------------------------
-Surv(heart$start, heart$stop, heart$event) 
-
-## ----eval=FALSE---------------------------------
-#  vignette("solutions2", package = "jrModelling")
 
