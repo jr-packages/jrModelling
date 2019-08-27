@@ -182,3 +182,10 @@ NULL
 #' @source https://www.ncbi.nlm.nih.gov/pubmed/5676802
 #' @docType data
 NULL
+
+#' @name votes
+#' @title Votes and Gender
+#' @description A fictional data set, comparing the gender of voters for different
+#' political parties.
+#' @docType data
+NULL
