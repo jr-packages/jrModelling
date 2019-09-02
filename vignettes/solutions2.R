@@ -19,7 +19,7 @@ library("tibble")
 df = tibble(x = x, y = y)
 ggplot(df, aes(x = x, y = y)) +
     geom_point() +
-    stat_smooth(
+    geom_smooth(
         method = "lm", se = FALSE,
         colour = "red", linetype = 2) + 
     labs(x = "Temp", y = "Sales")
@@ -27,7 +27,7 @@ ggplot(df, aes(x = x, y = y)) +
 ## ----fig.margin = TRUE, fig.cap="Scatterplot with the earnings data. Also shows the line of best fit.", out.width='\\textwidth', echo=FALSE----
 ggplot(df, aes(x = x, y = y)) +
     geom_point() +
-    stat_smooth(
+    geom_smooth(
         method = "lm", se = FALSE,
         colour = "red", linetype = 2) + 
     labs(x = "Temp", y = "Sales") + 
@@ -37,7 +37,7 @@ ggplot(df, aes(x = x, y = y)) +
 ## ---- fig.keep='none', eval = FALSE--------
 #  ggplot(df, aes(x = x, y = y)) +
 #  geom_point() +
-#  stat_smooth(
+#  geom_smooth(
 #      method = "lm", se = FALSE,
 #      colour = "red", linetype = 2) +
 #  labs(x = "Temp", y = "Sales") +
@@ -57,7 +57,7 @@ ggplot(m_aug, aes(x = .fitted, y = .std.resid)) +
 
 ## ----fig.keep='none'-----------------------
 ggplot(m_aug, aes(sample = .std.resid)) +
-    stat_qq() +
+    geom_qq() +
     geom_abline(colour = "steelblue",
                 linetype = 2) 
 ##Model diagnosics look good
@@ -76,7 +76,7 @@ cor(x, y)
 dfq2 = tibble(x = x, y = y)
 ggplot(dfq2, aes(x = x, y = y)) +
     geom_point() +
-    stat_smooth(
+    geom_smooth(
         method = "lm", se = FALSE,
         colour = "red", linetype = 2) 
 
@@ -92,7 +92,7 @@ ggplot(m_aug, aes(x = .fitted, y = .std.resid)) +
 
 ## ----fig.keep='none'-----------------------
 ggplot(m_aug, aes(sample = .std.resid)) +
-    stat_qq() +
+    geom_qq() +
     geom_abline(colour = "steelblue",
                 linetype = 2) 
 
@@ -126,7 +126,7 @@ ggplot(fit_aug, aes(x = .fitted, y = .std.resid)) +
                  colour = c("red", "green", "green"))
 
 ggplot(fit_aug, aes(sample = .std.resid)) +
-    stat_qq() +
+    geom_qq() +
     geom_abline(colour = "steelblue",
                 linetype = 2)
 
@@ -205,4 +205,7 @@ prcomp(dd)
 ## ----  fig.keep="none"---------------------
 prcomp(dd, scale=TRUE)
 biplot(prcomp(dd, scale=TRUE))
+
+## ---- eval = TRUE--------------------------
+vignette("solutions2", package = "jrModelling")
 

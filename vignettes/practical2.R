@@ -2,50 +2,55 @@
 library(tufte)
 knitr::opts_chunk$set(results = "hide", echo = FALSE)
 
+## ---- echo = TRUE--------------------------
+library("jrModelling")
+library("broom")
+library("ggplot2")
+
+## ---- echo = TRUE--------------------------
+data(icecream, package = "jrModelling")
+
 ## ------------------------------------------
-x = c(4,4,7,8,12,15,16,17,14,11,7,5)
-y = c(73, 57, 81, 94, 110, 124, 134, 139, 124, 103, 81, 80)
-m = lm(y~x)
-summary(m)
+m = lm(sales ~ temperature, data = icecream)
+tidy_m = tidy(m)
+tidy_m
 ##The p-value for the gradient is 9.9e-09
 ##This suggests temperature is useful
 
 ## ------------------------------------------
-cor(x, y)
+cor(icecream$temperature, icecream$sales)
 
 ## ----F1, fig.keep='none', message = FALSE, warning = FALSE----
 library("ggplot2")
-library("tibble")
-df = tibble(x = x, y = y)
-ggplot(df, aes(x = x, y = y)) +
+ggplot(icecream, aes(x = temperature, y = sales)) +
     geom_point() +
-    stat_smooth(
-        method = "lm", se = FALSE,
-        colour = "red", linetype = 2) + 
+    geom_abline(intercept = tidy_m$estimate[1],
+                    slope = tidy_m$estimate[2],
+                linetype = 2, colour = "red") + 
     labs(x = "Temp", y = "Sales")
 
 ## ----fig.margin = TRUE, fig.cap="Scatterplot with the earnings data. Also shows the line of best fit.", out.width='\\textwidth', echo=FALSE----
-ggplot(df, aes(x = x, y = y)) +
-    geom_point() +
-    stat_smooth(
-        method = "lm", se = FALSE,
-        colour = "red", linetype = 2) + 
-    labs(x = "Temp", y = "Sales") + 
+    ggplot(icecream, aes(x = temperature, y = sales)) +
+        geom_point() +
+        geom_abline(intercept = tidy_m$estimate[1],
+                        slope = tidy_m$estimate[2],
+                    linetype = 2, colour = "red") + 
+        labs(x = "Temp", y = "Sales") + 
     annotate("label", x = 6, y = 125, label = "r = 0.983") + 
     theme_bw()
 
 ## ---- fig.keep='none', eval = FALSE--------
-#  ggplot(df, aes(x = x, y = y)) +
-#  geom_point() +
-#  stat_smooth(
-#      method = "lm", se = FALSE,
-#      colour = "red", linetype = 2) +
-#  labs(x = "Temp", y = "Sales") +
+#  r = round(cor(icecream$temperature, icecream$sales), 2)
+#  ggplot(icecream, aes(x = temperature, y = sales)) +
+#      geom_point() +
+#      geom_abline(intercept = tidy_m$estimate[1],
+#                      slope = tidy_m$estimate[2],
+#                  linetype = 2, colour = "red") +
+#      labs(x = "Temp", y = "Sales") +
 #  annotate("label", x = 6, y = 125, label = paste("r =", r))
 
 ## ----F2, fig.keep='none', message = FALSE, warning = FALSE----
 ##Model diagnosics look good
-library("broom")
 m_aug = augment(m)
 ggplot(m_aug, aes(x = .fitted, y = .std.resid)) +
     geom_point() +
@@ -57,44 +62,10 @@ ggplot(m_aug, aes(x = .fitted, y = .std.resid)) +
 
 ## ----fig.keep='none'-----------------------
 ggplot(m_aug, aes(sample = .std.resid)) +
-    stat_qq() +
-    geom_abline(colour = "steelblue",
+    geom_qq() +
+    geom_qq_line(colour = "steelblue",
                 linetype = 2) 
 ##Model diagnosics look good
-
-## ----echo=FALSE----------------------------
-x = c(4, 4, 7, 8, 12, 15, 16, 17, 14, 11, 7, 5)
-y = c(73, 57, 81, 94, 110, 124, 134, 139, 124, 103, 81, 80)
-
-## ------------------------------------------
-m = lm(y~x)
-
-## ------------------------------------------
-cor(x, y)
-
-## ----fig.keep='none'-----------------------
-dfq2 = tibble(x = x, y = y)
-ggplot(dfq2, aes(x = x, y = y)) +
-    geom_point() +
-    stat_smooth(
-        method = "lm", se = FALSE,
-        colour = "red", linetype = 2) 
-
-## ----fig.keep='none'-----------------------
-m_aug = augment(m)
-ggplot(m_aug, aes(x = .fitted, y = .std.resid)) +
-    geom_point() +
-    geom_hline(
-        yintercept = c(0, -2, 2),
-        linetype = c(2, 3, 3),
-        colour = c("red", "green", "green")
-    )
-
-## ----fig.keep='none'-----------------------
-ggplot(m_aug, aes(sample = .std.resid)) +
-    stat_qq() +
-    geom_abline(colour = "steelblue",
-                linetype = 2) 
 
 ## ---- echo = TRUE, message = FALSE---------
 library("jrModelling")
@@ -126,7 +97,7 @@ ggplot(fit_aug, aes(x = .fitted, y = .std.resid)) +
                  colour = c("red", "green", "green"))
 
 ggplot(fit_aug, aes(sample = .std.resid)) +
-    stat_qq() +
+    geom_qq() +
     geom_abline(colour = "steelblue",
                 linetype = 2)
 
@@ -136,23 +107,23 @@ ggplot(fit_aug, aes(sample = .std.resid)) +
 # Consider transforming the response variable or the explanatory variables
 # or adding a square term / interaction term to your model.
 
-## ------------------------------------------
-data(drphil)
+## ---- echo = TRUE--------------------------
+data(drphil, package = "jrModelling")
 
 ## ------------------------------------------
-(m = lm(IQ ~ AgeBegin + AgeEnd + TotalYears, data=drphil))
+(m = lm(IQ ~ AgeBegin + AgeEnd + TotalYears, data = drphil))
 #The problem is TotalYears = AgeEnd - AgeBegin
 #Solution: remove TotalYears
 
+## ---- echo = TRUE--------------------------
+data(iq, package = "jrModelling")
+
 ## ------------------------------------------
-x1 = c(109, 114, 108, 123, 115, 108, 114)
-x2 = c(113, 114, 113, 108, 119, 112, 110)
-x3 = c(103, 94, 114, 107, 107, 113, 107)
-dd = tibble(values = c(x1, x2, x3), type = rep(c("M", "S", "H"), each=7))
-m = aov(values ~ type, dd)
-summary(m)
-##The p value is around 0.056.
-##This suggests a difference may exist.
+m = aov(score ~ music, data = iq)
+tidy_m = tidy(m)
+tidy_m    
+## The p value is around 0.056.
+## This suggests a difference may exist.
 
 ## ----F3, fig.keep='none'-------------------
 m_aug = augment(m)
@@ -177,32 +148,36 @@ ggplot(m_aug, aes(x = .fitted, y = .std.resid)) +
 ## ------------------------------------------
 TukeyHSD(m)
 
-## ---- echo = TRUE--------------------------
-data(hep)
-##Remove the athletes names and final scores.
-hep_s = hep[,2:8]
+# The p values indicate that there the main differences can be found between the Mozart - Heavy Metal & Silence - Heavy Metal comparisons. Looking at the boxplot we can see that the iq scores for participants listening to Heavy Metal were lower than those listening to Mozart or silence. However, there was not much difference in performance between those listening to Mozart compared to those listening to silence.
 
-## ----fig.keep="none"-----------------------
-plot(hclust(dist(hep_s)), labels=hep[,1])
+ggplot(iq, aes(x = music, y = score)) +
+    geom_boxplot()
+
+## ---- echo = TRUE--------------------------
+data(hep, package = "jrModelling")
+##Remove the athletes names and final scores.
+hep_names = hep[, 1]
+hep = hep[, 2:8]
+
+## ---- fig.keep="none"----------------------
+plot(hclust(dist(hep)), labels = hep_names)
 
 ## ------------------------------------------
 ##Round to 2dp
-signif(cor(hep_s), 2)
+signif(cor(hep), 2)
 
 ## ------------------------------------------
-##Remove:
-##1st column: athletes name
-##Last column: It's a combination of the other columns
-dd = hep[ ,2:8]
-
 ##Run principle components
-prcomp(dd)
+prcomp(hep)
 
 ## ------------------------------------------
 ##Yes!. run800m dominates the loading since
 ##the scales differ
+prcomp(hep, scale = TRUE)
 
 ## ----  fig.keep="none"---------------------
-prcomp(dd, scale=TRUE)
-biplot(prcomp(dd, scale=TRUE))
+biplot(prcomp(hep, scale = TRUE))
+
+## ---- echo = TRUE, eval = FALSE------------
+#  vignette("solutions2", package = "jrModelling")
 

@@ -189,3 +189,18 @@ NULL
 #' political parties.
 #' @docType data
 NULL
+
+#' @name icecream
+#' @title Luigi Minchella’s ice cream parlour.
+#' @description A fictional data set, investigating the relationshop between 
+#' temperature and icecream sales.
+#' @docType data
+NULL
+
+#' @name iq
+#' @title How music effects examination scores
+#' @description A pilot study was developed to investigate whether music 
+#' influenced exam scores. Three groups of students listened to 10 minutes of 
+#' Mozart, silence or heavy metal before an IQ test.
+#' @docType data
+NULL

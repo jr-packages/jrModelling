@@ -1,21 +1,16 @@
+
+Load the relevant packages.
+```{r, echo = TRUE, message= FALSE, warning = FALSE}
+library("jrModelling")
+library("broom")
+library("tidyverse")
+```
+
 \noindent I've starred, $^*$, some of the questions. This indicates that we didn't directly cover the material in the lecture. If you are particular interested in this statistical area, try the question. Otherwise, just move on.
-    ```{r, echo=FALSE, message = FALSE, warning = FALSE}
-    library("tibble")
-    x = c(78.64,79.01, 79.57, 79.52, 80.71, 79.95, 78.50,
-      79.10, 81.98, 80.09, 80.29, 80.22)
-    y = c(81.92, 81.12, 82.47, 82.86, 82.89, 82.45,
-         82.51, 81.11, 83.07, 82.77, 82.38, 83.14)
-    dd = tibble(x = x, y = y)
-    ```
-    ```{r, echo=FALSE}
-    x = c(78.64,79.01, 79.57, 79.52, 80.71, 79.95, 78.50,
-      79.10, 81.98, 80.09, 80.29, 80.22)
-    y = c(81.92, 81.12, 82.47, 82.86, 82.89, 82.45,
-         82.51, 81.11, 83.07, 82.77, 82.38, 83.14)
-    dd = tibble(x = x, y = y)
-    ## var(y)
-    ## var.test(x, y)
-    ```
+
+## Question 1
+
+We conducted an experiment and collected the data in the tables above. This data set isn't paired.
 
 \begin{table}
   \centering
@@ -40,68 +35,68 @@
   \end{tabular}
 \end{table}
 
-## Question 1
+Use the code below to read in the data set to R. If you prefer, you can copy the data into a `.csv` file, and practice reading in data using `read_csv()`.
 
-We conducted an experiment and collected the data in the tables above. This data set isn't paired.^[I intentionally didn't make the data available for download so you would have to think about how to enter the data. You could enter it either Excel and import or directly into R.]
-
-```{r, message = FALSE, warning = FALSE}
-library("tibble")
-##Data for question 1
-## Easier using Excel and export as CSV
-x = c(78.64,79.01, 79.57, 79.52, 80.71, 79.95, 78.50,
+```{r, message = FALSE, warning = FALSE, echo = TRUE}
+a = c(78.64,79.01, 79.57, 79.52, 80.71, 79.95, 78.50,
   79.10, 81.98, 80.09, 80.29, 80.22)
-y = c(81.92, 81.12, 82.47, 82.86, 82.89, 82.45,
+b = c(81.92, 81.12, 82.47, 82.86, 82.89, 82.45,
      82.51, 81.11, 83.07, 82.77, 82.38, 83.14)
-dd = tibble(x = x, y = y)
+results = tibble(a, b)
 ```
 
-a) Input the data into R^[Here I would suggest input the data into Excel and using `read_csv()`]. Combine the two data sets into a single data frame.
-    ```{r, echo=FALSE}
-    d1 = tibble(value = x)
-    d2 = tibble(value = y)
-    ```
-    ```{r,  eval=FALSE}
-    ## Suppose you have two separate data files. Here is some code that will help ## you combine
-    ## them. First we read in the separate files:
-    d1 = read.csv("Method1.csv")
-    d2 = read.csv("Method2.csv")
-    ```
-    ```{r,  }
-    ## In order to combine the data frames,
-    ## they must have the same column names:
-    head(d1, 2)
-    head(d2, 2)
-    ```
-    ```{r,}
-    ## We combine data frames using rbind (row bind)
-    d = rbind(d1, d2)
-    ```
-    ```{r,  }
-    ## Finally we create a new column to indicate the Method
-    ## rep is the replicate function. See ?rep
-    d$Method = rep(1:2, each=12)
-    head(d, 2)
-    ```
 
 
-b) Exploratory data analysis. - Construct boxplots, histograms and q-q plots for both data sets. Work out the means and standard deviations. Before carrying out any statistical test, what do you think your conclusions will be? Do you think the variances are roughly equal? Do you think the data conforms to a normaldistribution.
+a) Sometimes, it's useful to get data into a tidy format before we start analysis. We can then use the `gather()` function from **tidyr** to get the data into the correct shape for analysis. The `gather()` function gathers up the two method columns into one new variable "method".  If you haven't used the `gather()` function before, have a look at the help file `?gather()`. 
+
+    ```{r, echo = TRUE}
+ results = gather(results, key = "method", value = "value")
+    ```
+
+b) Exploratory data analysis. - Construct boxplots, density plots and q-q plots for both data sets. Work out the means and standard deviations. Before carrying out any statistical test, what do you think your conclusions will be? Do you think the variances are roughly equal? Do you think the data conforms to a normal distribution.
+
+```{r, fig.keep = 'none'}
+
+# Box plot
+ggplot(results, aes(x = method, y = value)) + 
+  geom_boxplot()
+
+# Density plot
+ggplot(results, aes(x = value, fill = method)) + 
+  geom_density(alpha = 0.4)
+
+# QQ plots
+ggplot(results, aes(sample = value, col = method)) + 
+  geom_qq() + 
+  geom_qq_line()
+
+# Means and standard deviations
+results %>%
+  group_by(method) %>%
+    summarise(mean = round(mean(value),2 ),
+              sd = round(sd(value), 2))
+```
+
 
 c) Carry out a two sample $t$-test. Assume that the variances are unequal.
     ```{r,  }
-    t.test(value ~ Method, data=d, var.equal=FALSE)
+    t.test(value ~ method, data = results, var.equal=FALSE)
     ```
 How does this answer compare with your intuition?
 
 d) Carry out a two sample $t$-test, assuming equal variances.
     ```{r,  }
-    t.test(value ~ Method, data=d, var.equal=TRUE)
+    t.test(value ~ method, data = results, var.equal=TRUE)
     ```
 
 e) $^*$ Now carry out a `wilcox.test()`.
+```{r, }
+wilcox.test(value ~ method, data = results)
+```
 
 ## Question 2
 
-\newthought{Suppose we} are interested whether successful business executives are affected by their zodiac sign. We have collected 4265 samples and obtained the following data
+\newthought{Suppose we} are interested whether successful business executives are affected by their zodiac sign. We have collected 4265 samples and obtained the data shown in table \ref{tab:1}.
 
 \begin{table*}[h]
   \resizebox{\textwidth}{!}{%
@@ -118,14 +113,20 @@ e) $^*$ Now carry out a `wilcox.test()`.
   \label{tab:1}
 \end{table*}
 
+Load the data into R using the following code
+```{r, echo = TRUE}
+zodiac = c(348, 353, 359, 357, 350, 355, 359, 367, 345, 362, 343, 367)
+```
+
 a) Carry out a $\chi^2$ goodness of fit test on the zodiac data. Are business
 executives distributed uniformly across zodiac signs?
+
     ```{r,  }
-    x = c(348, 353, 359, 357, 350, 355, 359, 367, 345, 362, 343, 367)
-    m = chisq.test(x)
-    ##Since p > 0.05 we can't accept the alternative hypothesis.
-    ##However, the question is worded as though we can "prove" the Null
-    ##hypotheis, which we obviously can't do.
+    zodiac = c(348, 353, 359, 357, 350, 355, 359, 367, 345, 362, 343, 367)
+    m = chisq.test(zodiac)
+    ## Since p > 0.05 we can't accept the alternative hypothesis.
+    ## However, the question is worded as though we can "prove" the Null
+    ## hypotheis, which we obviously can't do.
     ```
 
 
@@ -136,13 +137,9 @@ b) What are the expected values for each zodiac sign? Hint: Use `augment()`
     m_aug$.expected
     ```
 
-c) The formula for calculating the residuals^[These residuals are called Pearson residuals. Hint: use `str(m)` to extract the residuals.] is given by
-    \[
-  \frac{\text{observed} - \text{expected}}{\sqrt{\text{expected}}}
-  \]
-Which residuals are large?
+c) Use `augment()` to look at the standardised residuals. Which are large?
     ```{r,  }
-    m_aug$.residuals
+    m_aug$.stdres
     ```
 
 ## Question 3
@@ -169,14 +166,17 @@ summarised as follows:
 \end{tabular}
 \end{table}
 
+Use the following code to create the data set.
+
+```{r, echo = TRUE}
+tattoo = tibble(hep = c(17, 8, 22), no_hep = c(35, 53, 491))
+```
+
 a) Carry out a $\chi^2$ test to determine if the Hepatitis is related to
 tattoo status.
-    ```{r, warning=FALSE, }
-    h = c(17, 8, 22)
-    nh = c(35, 53, 491)
-    dd = tibble(h, nh)
-    m = chisq.test(dd)
-    ```
+```{r, warning=FALSE, }
+    m = chisq.test(tattoo)
+```
 
 b) When carrying out $\chi^2$ tests, we should make sure that individual
 cells have expected values of at least five, otherwise the distributional
@@ -191,14 +191,13 @@ c) Since some of the cells have expected values slightly less than five, we
 should ensure that these aren't driving the test statistic. Look at the test
 residuals. Which residuals are large? What should you do now?
     ```{r,  }
-    ##Some of the expected values are less then 5
-    ##So consider combining cells.
+    ## Look at the .stdres column of aug_m. Some residuals are very large.
+    ## We could consider combining cells.
     ```
-
 
 ## Solutions
 
 Solutions are contained within this package:
-```{r, eval=FALSE}
+```{r, echo = TRUE, eval = FALSE}
 vignette("solutions1", package = "jrModelling")
 ```

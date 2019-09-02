@@ -56,10 +56,18 @@ d$Method = rep(1:2, each=12)
 head(d, 2)
 
 ## ------------------------------------------
+# boxplots
+# histograms
+# qq plots
+
+## ------------------------------------------
 t.test(value ~ Method, data=d, var.equal=FALSE)
 
 ## ------------------------------------------
 t.test(value ~ Method, data=d, var.equal=TRUE)
+
+## ------------------------------------------
+wilcox.test(value ~ Method, data = d)
 
 ## ------------------------------------------
 x = c(348, 353, 359, 357, 350, 355, 359, 367, 345, 362, 343, 367)
@@ -74,7 +82,7 @@ m_aug = augment(m)
 m_aug$.expected
 
 ## ------------------------------------------
-m_aug$.residuals
+m_aug$.std.residuals
 
 ## ---- warning=FALSE------------------------
 h = c(17, 8, 22)
@@ -90,6 +98,6 @@ m_aug$.expected
 ##Some of the expected values are less then 5
 ##So consider combining cells.
 
-## ---- eval=FALSE---------------------------
+## ---- echo = TRUE, eval = FALSE------------
 #  vignette("solutions1", package = "jrModelling")
 
