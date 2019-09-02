@@ -20,7 +20,7 @@ Imports:
     tufte, 
     gridExtra,
     broom,
-    tibble
+    tidyverse
 Remotes: 
     jr-packages/jrData
 Suggests:
@@ -30,8 +30,7 @@ Suggests:
     testthat,
     lintr,
     cowsay,
-    DT,
-    formatR
+    DT
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1
 Encoding: UTF-8
