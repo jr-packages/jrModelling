@@ -4,12 +4,12 @@
 \alias{rotation}
 \title{Apply a rotation to a matrix}
 \usage{
-rotation(t, X)
+rotation(t, x)
 }
 \arguments{
 \item{t}{angle}
 
-\item{X}{matrix to rotate}
+\item{x}{matrix to rotate}
 }
 \description{
 Apply a rotation to a matrix

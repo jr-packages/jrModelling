@@ -5,7 +5,7 @@
 \alias{iq}
 \title{How music effects examination scores}
 \description{
-A pilot study was developed to investigate whether music 
-influenced exam scores. Three groups of students listened to 10 minutes of 
+A pilot study was developed to investigate whether music
+influenced exam scores. Three groups of students listened to 10 minutes of
 Mozart, silence or heavy metal before an IQ test.
 }

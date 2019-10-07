@@ -8,8 +8,8 @@
 A data frame
 }
 \description{
-Ten wooden beams had 
-their Strength measured together with their 
+Ten wooden beams had
+their Strength measured together with their
 Gravity and Moisture.
 }
 \examples{

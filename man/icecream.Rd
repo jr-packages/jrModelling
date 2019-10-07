@@ -5,6 +5,6 @@
 \alias{icecream}
 \title{Luigi Minchella’s ice cream parlour.}
 \description{
-A fictional data set, investigating the relationshop between 
+A fictional data set, investigating the relationshop between
 temperature and icecream sales.
 }

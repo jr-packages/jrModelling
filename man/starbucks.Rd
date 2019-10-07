@@ -8,6 +8,6 @@
 https://www.kaggle.com/starbucks/
 }
 \description{
-This dataset includes the nutritional information for Starbucks' 
+This dataset includes the nutritional information for Starbucks'
 food menu items.
 }
