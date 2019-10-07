@@ -1,3 +1,16 @@
+---
+title: "Logistic Regression"
+author: "Jumping Rivers"
+output:
+  tufte::tufte_handout:
+    latex_engine: xelatex
+  tufte::tufte_html: default
+vignette: >
+  %\VignetteIndexEntry{logisticregression}
+  \usepackage[utf8]{inputenc}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
 # Logistic Regression
 
 ## Introduction
