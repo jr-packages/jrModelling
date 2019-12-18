@@ -3,4 +3,4 @@
 Makefile
 .travis.yml
 ^.lintr$
-^.Dockerfile$
+Dockerfile
