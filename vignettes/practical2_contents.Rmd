@@ -129,8 +129,8 @@ suggest you have a problem with your model? What do you do?
     
     ggplot(fit_aug, aes(x = .fitted, y = .std.resid)) +
         geom_point() + 
-        geom_hline(yintercept = c(0,-2, 2), 
-                     linetype = c(2,3,3), 
+        geom_hline(yintercept = c(0, -2, 2), 
+                     linetype = c(2, 3, 3), 
                      colour = c("red", "green", "green"))
     
     ggplot(fit_aug, aes(sample = .std.resid)) +
@@ -197,8 +197,8 @@ data(iq, package = "jrModelling")
     m_aug = augment(m)
     ggplot(m_aug, aes(x = .fitted, y = .std.resid)) +
         geom_point() + 
-        geom_hline(yintercept = c(0,-2, 2), 
-                     linetype = c(2,3,3), 
+        geom_hline(yintercept = c(0, -2, 2), 
+                     linetype = c(2, 3, 3), 
                      colour = c("red", "green", "green"))
     ## Residual plot looks OK
     ```
@@ -206,8 +206,8 @@ data(iq, package = "jrModelling")
     ```{r,fig.margin = TRUE, out.width='\\textwidth', echo=FALSE, fig.cap = "Model diagnosics for the music data.", message = FALSE, warning = FALSE}
     ggplot(m_aug, aes(x = .fitted, y = .std.resid)) +
         geom_point() + 
-        geom_hline(yintercept = c(0,-2, 2), 
-                     linetype = c(2,3,3), 
+        geom_hline(yintercept = c(0, -2, 2), 
+                     linetype = c(2, 3, 3), 
                      colour = c("red", "green", "green")) +
         ylim(-2.5, 2.5) +
         theme_bw() +
@@ -218,8 +218,12 @@ data(iq, package = "jrModelling")
 3. Perform a multiple comparison test to determine where the difference lies.
 ```{r,  }
 TukeyHSD(m)
-
-# The p values indicate that there the main differences can be found between the Mozart - Heavy Metal & Silence - Heavy Metal comparisons. Looking at the boxplot we can see that the iq scores for participants listening to Heavy Metal were lower than those listening to Mozart or silence. However, there was not much difference in performance between those listening to Mozart compared to those listening to silence.
+## The p values indicate that the main differences can be found between the Mozart -
+## Heavy Metal & Silence - Heavy Metal comparisons. Looking at the boxplot we can see
+## that the iq scores for participants listening to Heavy Metal were lower than those
+## listening to Mozart or silence. However, there was not much difference in
+## performance between those listening to Mozart compared to those listening to
+## silence.
 
 ggplot(iq, aes(x = music, y = score)) +
     geom_boxplot()
