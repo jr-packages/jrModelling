@@ -1,37 +1,41 @@
-Package: jrModelling
 Type: Package
+Package: jrModelling
 Title: Statistical Modelling with R
 Version: 0.1.31
-Authors@R: person("Jumping", "Rivers", 
-  email="info@jumpingrivers.com", 
-  role = c("aut", "cre"))
-Description: Practicals and data sets for an Introduction to Statistical modelling.
-URL: http://jumpingrivers.com
+Authors@R: 
+    person(given = "Jumping",
+           family = "Rivers",
+           role = c("aut", "cre"),
+           email = "info@jumpingrivers.com")
+Description: Practicals and data sets for an Introduction to
+    Statistical modelling.
 License: GPL-3 | GPL-2
+URL: http://jumpingrivers.com
 Depends:
     R (>= 3.2.0)
 Imports:
+    broom,
     coin,
-    shiny,
-    ggplot2, 
-    titanic,
+    ggplot2,
+    gridExtra,
     mvtnorm,
     rmarkdown,
-    tufte, 
-    gridExtra,
-    broom,
-    tidyverse
+    shiny,
+    tidyverse,
+    titanic,
+    tufte
+Suggests:
+    cowsay,
+    dplyr,
+    DT,
+    jrData,
+    knitr,
+    lintr,
+    survival,
+    testthat
+VignetteBuilder: 
+    knitr
 Remotes: 
     jr-packages/jrData
-Suggests:
-    survival,
-    knitr,
-    jrData,
-    testthat,
-    lintr,
-    cowsay,
-    DT, 
-    dplyr
-VignetteBuilder: knitr
-RoxygenNote: 7.0.2
 Encoding: UTF-8
+RoxygenNote: 7.0.2
