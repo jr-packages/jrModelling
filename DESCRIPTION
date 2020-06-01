@@ -1,7 +1,7 @@
 Type: Package
 Package: jrModelling
 Title: Statistical Modelling with R
-Version: 0.1.33
+Version: 0.1.34
 Authors@R: 
     person(given = "Jumping",
            family = "Rivers",
@@ -12,7 +12,7 @@ Description: Practicals and data sets for an Introduction to
 License: GPL-3 | GPL-2
 URL: http://jumpingrivers.com
 Depends:
-    R (>= 3.2.0)
+    R (>= 3.5.0)
 Imports:
     broom,
     coin,
