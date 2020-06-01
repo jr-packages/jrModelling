@@ -101,6 +101,7 @@ obtained at presentation. We are interested in how OI changes with age and
 gender. The data can be obtained from
 ```{r, echo = TRUE, message = FALSE}
 library("jrModelling")
+library("broom")
 data(graves)
 ```
 
@@ -113,13 +114,6 @@ data(graves)
 suggest you have a problem with your model? What do you do?
     ```{r,fig.keep='none'}
     fit_aug = augment(fit)
-    ggplot(fit_aug, aes(x = OI,
-                        y = .std.resid)) +
-        geom_point() +
-        geom_hline(yintercept = c(0, -2, 2),
-                   linetype = c(2, 3, 3),
-                   colour = c("red", "green", "green"))
-
     ggplot(fit_aug, aes(x = age, 
                         y = .std.resid)) +
         geom_point() +
@@ -138,11 +132,11 @@ suggest you have a problem with your model? What do you do?
         geom_abline(colour = "steelblue",
                     linetype = 2)
     
-    # The q-q plot shows the residuals lying close to the fitted straight 
-    # line which suggests that the normality assumption is satisfied.
-    # The residuals in the first plot appear to show a pattern. 
-    # Consider transforming the response variable or the explanatory variables
-    # or adding a square term / interaction term to your model.
+    # The q-q plot shows the residuals deviating from the straight 
+    # line at the tails which suggests that the normality assumption not satisfied.
+    # The residuals in the age vs std resid plot appear to show a pattern. 
+    # Looking at a histogram of the repsonse variable, we can see it is not normally distributed.
+    # Consider transforming the response variable ,or adding a square term / interaction term to #      # your model.
     ```
 
 ## Question 3 - Multiple Linear Regression

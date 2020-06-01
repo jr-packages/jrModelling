@@ -1,7 +1,7 @@
 Type: Package
 Package: jrModelling
 Title: Statistical Modelling with R
-Version: 0.1.31
+Version: 0.1.32
 Authors@R: 
     person(given = "Jumping",
            family = "Rivers",
@@ -38,4 +38,4 @@ VignetteBuilder:
 Remotes: 
     jr-packages/jrData
 Encoding: UTF-8
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
