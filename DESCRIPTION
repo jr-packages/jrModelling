@@ -28,6 +28,7 @@ Suggests:
     cowsay,
     dplyr,
     DT,
+    ggrepel,
     jrData,
     knitr,
     lintr,
