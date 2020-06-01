@@ -11,6 +11,18 @@
 #' data(beams, package="jrModelling")
 NULL
 
+#' Star signs of CEOs
+#'
+#' Star signs of over 4000 business CEOS
+#' were taken
+#' @name zodiac
+#' @docType data
+#' @return A data frame
+#' @keywords datasets
+#' @examples
+#' data(zodiac, package="jrModelling")
+NULL
+
 #' Graves data set
 #'
 #' The data are from 101 consecutive patients attending a combined
