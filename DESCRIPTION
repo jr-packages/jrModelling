@@ -22,8 +22,7 @@ Imports:
     rmarkdown,
     shiny,
     tidyverse,
-    titanic,
-    tufte
+    titanic
 Suggests:
     cowsay,
     dplyr,
@@ -33,7 +32,8 @@ Suggests:
     knitr,
     lintr,
     survival,
-    testthat
+    testthat,
+    tufte
 VignetteBuilder: 
     knitr
 Remotes: 
