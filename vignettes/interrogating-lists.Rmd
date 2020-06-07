@@ -171,4 +171,4 @@ Xsq$stdres
 \noindent This table helps to explain why we rejected the null hypotheis of no association
 between gender and voting preference. It appears that more males voted Labour
 and fewer voted Liberal Democrat than would have been expected if the null hypothesis
-was true.
+was true. 
